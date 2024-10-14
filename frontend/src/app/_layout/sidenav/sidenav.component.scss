@@ -1,0 +1,11 @@
+.sideNav{    width: 200px;
+    background: #ededee;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    li{
+        a{width: 100%;padding: 10px 10px; display: block;}
+    }
+}

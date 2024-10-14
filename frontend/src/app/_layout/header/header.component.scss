@@ -1,0 +1,8 @@
+.header{height: 50px;background: #e3e3e6;position: fixed;top:0;left:0; width: 100%;
+    ul{display: flex;    align-items: flex-end;
+       li{ list-style: none;
+            &.align{margin-left: auto;}
+            a{display: inline-block;padding: 10px;}
+        }
+    }
+}

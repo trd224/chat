@@ -1,0 +1,42 @@
+.sideNav{width: 200px;height: 100vh;position: fixed;background: #ddd;
+  .active{background: #bbb;
+    a{font-weight: bold;}
+  }
+}
+.chatSection{margin-left: 200px;margin-top: 50px;
+  h2{margin-bottom: 30px;}
+}
+.uploadedImg{width: 200px;}
+ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  ul li {
+    padding: 10px;
+    background-color: #f1f1f1;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  input {
+    padding: 8px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  button:hover {
+    background-color: #218838;
+  }
+
+  .receiver{text-align: right;}
+  

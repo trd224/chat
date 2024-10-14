@@ -1,0 +1,11 @@
+<h2>Built-in Pipe</h2>
+<p>{{ today | date:'short' }}</p> <!-- e.g., 7/15/24, 12:00 PM -->
+<p>{{ today | date:'fullDate' }}</p> <!-- e.g., Monday, July 15, 2024 -->
+<p>{{ today | date:'yyyy-MM-dd' }}</p> <!-- e.g., 2024-07-15 -->
+<p>{{ today | date:'MM/dd/yyyy' }}</p> <!-- e.g., 07/15/2024 -->
+
+<h2>Custom Pipe</h2>
+
+<p>Original Date: {{ currentDate }}</p>
+<p>Formatted Date: {{ currentDate | dateFormat: 'MM/dd/yyyy' }}</p>
+<p>Custom Format Date: {{ currentDate | dateFormat: 'yyyy-MM-dd' }}</p>

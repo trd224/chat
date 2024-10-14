@@ -1,0 +1,7 @@
+<h1>Users List</h1>
+
+<ul>
+    <li *ngFor="let user of users">
+        <a (click)="goToDetail(user)">{{user.name}}</a>
+    </li>
+</ul>

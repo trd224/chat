@@ -1,0 +1,13 @@
+<form [formGroup]="demoForm" (ngSubmit)="onSubmit()">
+    <div formArrayName="items">
+        <ng-container *ngFor="let item of f.controls; let i=index" [formGroupName]="i">
+            <div class="field">
+                <label>name</label>
+                <input type="text" formControlName="name">
+            </div>
+            <button (click)="deleteRow(i)">Delete</button>
+        </ng-container>
+    </div>
+    <button (click)="addItem()">Add</button>
+    <button type="submit">Submit</button>
+</form>

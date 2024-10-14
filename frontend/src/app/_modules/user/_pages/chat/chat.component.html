@@ -1,0 +1,48 @@
+<div>
+    <div class="sideNav">
+      <ul>
+        <ng-container *ngFor="let user of users">
+          <li *ngIf="user?.email != currentUser?.email" [ngClass]="{ 'active': user?.email == receiver}" (click)="goToChat(user)">
+              <a>{{user.name}}</a>
+          </li>
+        </ng-container>
+        
+    </ul>
+    </div>
+    <div class="chatSection" *ngIf="receiver">
+        <h2>Chat with {{ receiver }}</h2>
+      
+      <!-- <div>
+        <input [(ngModel)]="receiver" placeholder="Receiver's Username" />
+        <button (click)="fetchHistory()">Load History</button>
+      </div> -->
+    
+      <ul>
+        <ng-container *ngFor="let msg of messages">
+          <li [ngClass]="{ 'receiver': currentUser?.email !== msg.sender}">
+            <strong>{{ msg.sender }}:</strong> 
+            <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
+            <img *ngIf="msg.fileUrl" class="uploadedImg" [src]="msg.fileUrl" alt="">
+          </li>
+        </ng-container>
+      </ul>
+
+  
+
+        <!-- Typing Indicator -->
+      <div *ngIf="typingIndicator" class="typing-indicator">
+        <p>{{ typingIndicator }}</p>
+      </div>
+    
+      <input [(ngModel)]="message" placeholder="Type a message..." (input)="onTyping()"/>
+      <button (click)="sendMessage()">Send</button>
+
+
+
+      <!-- File Upload -->
+      <input type="file" (change)="handleFileInput($event)" />
+      <button (click)="sendFile()">Send File</button>
+
+    </div>
+    
+  </div>

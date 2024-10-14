@@ -1,0 +1,6 @@
+<form [formGroup]="cffForm" (ngSubmit)="onSubmit()">
+    <app-input formControlName="name" [data]="nameData"></app-input>
+    <app-input formControlName="email" [data]="emailData"></app-input>
+    <button type="submit">Submit</button>
+    <button type="button" (click)="onReset()">Reset</button>
+</form>

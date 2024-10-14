@@ -1,0 +1,45 @@
+<app-card>
+    <form [formGroup] = "signupForm" (ngSubmit)="onSubmit()">
+        <div class="formField">
+            <label>Name</label>
+            <input type="text" formControlName="name">
+            <div class="error-msg" *ngIf="f['name'].touched && f['name'].invalid">Name is required</div>
+        </div>
+        <div class="formField">
+            <label>Mobile</label>
+            <input type="text" formControlName="mobile">
+            <!-- <div class="error-msg" *ngIf="f['mobile'].touched && f['mobile'].invalid">Mobile number is required</div> -->
+             <div class="error-msg" *ngIf="submitted && f['mobile'].errors">
+                <div *ngIf="f['mobile'].errors['required']">Mobile Number is required</div>
+                <div *ngIf="!f['mobile'].errors['required'] && f['mobile'].errors['isError']">Mobile number is not corrent</div>
+             </div>
+        </div>
+        <div class="formField">
+            <label>email</label>
+            <input type="email" formControlName="email">
+            <div class="error-msg" *ngIf="f['email'].touched && f['email'].invalid">Email is required</div>
+        </div>
+        <div class="formField">
+            <label>password</label>
+            <input type="password" formControlName="password">
+            <div *ngIf="submitted && f['password'].errors" class="error-msg">
+                <div *ngIf="f['password'].errors['required']">Password is required</div>
+                <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                <div *ngIf="f['password'].errors['maxlength']">Password must not be more than 15 characters</div>
+            </div>
+        </div>
+        <div class="formField">
+            <label>Confirm Password</label>
+            <input type="password" formControlName="confirmPassword">
+            <div *ngIf="submitted && f['confirmPassword'].errors" class="error-msg">
+                <div *ngIf="f['confirmPassword'].errors['required']">Confirm password is required</div>
+                <div *ngIf="!f['confirmPassword'].errors['required'] && f['confirmPassword'].errors['passwordNotMatchError']">Password not match</div>
+            </div>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+        
+        
+    </form>
+</app-card>

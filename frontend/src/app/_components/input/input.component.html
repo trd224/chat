@@ -1,0 +1,16 @@
+<div class="field">
+    <input [type]="data.type" [value]="value" (input)="handleInputChange($event)" />
+    <!-- <div class="error-msg" *ngIf="submitted && f['mobile'].errors">
+        <div *ngIf="f['mobile'].errors['required']">Mobile Number is required</div>
+        <div *ngIf="!f['mobile'].errors['required'] && f['mobile'].errors['isError']">Mobile number is not corrent</div>
+     </div> -->
+     <!-- <p>{{control?.errors | json}}</p> -->
+      <p>{{showError}}</p>
+     <div *ngIf="showError">
+       
+        <p *ngIf="control?.errors['required']">This field is required </p>
+        <p *ngIf="control?.errors['email']">Email id is not correct </p>
+        <!-- Add other error messages as needed -->
+      </div>
+</div>
+
