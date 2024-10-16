@@ -1,4 +1,4 @@
-const Message = require("../models/message");
+const Chat = require("../models/chat");
 const socketIo = require('socket.io');
 
 let io;
@@ -42,8 +42,8 @@ const initSocket = async (server) => {
         const { sender, receiver, message } = data;
 
         // Store the message in MongoDB
-        const newMessage = new Message({ sender, receiver, message });
-        await newMessage.save();
+        const newChat = new Chat({ sender, receiver, message });
+        await newChat.save();
 
         const receiverSocketId = connectedUsers.get(receiver);
 
@@ -63,8 +63,8 @@ const initSocket = async (server) => {
         const { sender, receiver, fileName, fileUrl, fileType } = data;
 
         // Store the file metadata (e.g., fileUrl, fileType) in MongoDB
-        const newMessage = new Message({ sender, receiver, message: `${fileType} uploaded`, fileName, fileUrl, fileType });
-        await newMessage.save();
+        const newChat = new Chat({ sender, receiver, message: `${fileType} uploaded`, fileName, fileUrl, fileType });
+        await newChat.save();
 
         const receiverSocketId = connectedUsers.get(receiver);
 

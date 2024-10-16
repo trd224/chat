@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const messageSchema = new mongoose.Schema({
+const chatSchema = new mongoose.Schema({
   sender: String,
   receiver: String,
   message: String,
@@ -10,6 +10,6 @@ const messageSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Message', messageSchema);
+module.exports = mongoose.model('Chat', chatSchema);
 
 

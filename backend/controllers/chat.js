@@ -1,9 +1,9 @@
-const Message = require("../models/message");
+const Chat = require("../models/chat");
 const path = require('path');
 
 async function chatHistory(req, res){
     const { sender, receiver } = req.params;
-    const messages = await Message.find({
+    const messages = await Chat.find({
       $or: [
         { sender, receiver },
         { sender: receiver, receiver: sender }
