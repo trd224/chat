@@ -16,18 +16,14 @@ import { SidenavComponent } from './_layout/sidenav/sidenav.component';
 import { Page404Component } from './_pages/page404/page404.component';
 import { DashboardComponent } from './_pages/dashboard/dashboard.component';
 import { SignupComponent } from './_pages/signup/signup.component';
-import { AboutComponent } from './_pages/about/about.component';
-import { ClickLoggerDirective } from './_directives/click-logger.directive';
-import { DirectiveExampleComponent } from './_pages/directive-example/directive-example.component';
+
+
+
 import { DateFormatPipe } from './_pipes/date-format.pipe';
-import { CustomPipeComponent } from './_pages/custom-pipe/custom-pipe.component';
+
 import { LoginComponent } from './_pages/login/login.component';
-import { CffComponent } from './_pages/cff/cff.component';
-import { InputComponent } from './_components/input/input.component';
-import { FormArrayExampleComponent } from './_pages/form-array-example/form-array-example.component';
-import { WorkSpaceComponent } from './_pages/work-space/work-space.component';
-import { FormArrayExample1Component } from './_components/form-array-example1/form-array-example1.component';
-import { FormArrayExample2Component } from './_components/form-array-example2/form-array-example2.component';
+
+
 
 
 
@@ -41,18 +37,9 @@ import { FormArrayExample2Component } from './_components/form-array-example2/fo
     Page404Component,
     DashboardComponent,
     SignupComponent,
-    AboutComponent,
-    ClickLoggerDirective,
-    DirectiveExampleComponent,
+
     DateFormatPipe,
-    CustomPipeComponent,
     LoginComponent,
-    CffComponent,
-    InputComponent,
-    FormArrayExampleComponent,
-    WorkSpaceComponent,
-    FormArrayExample1Component,
-    FormArrayExample2Component,
   ],
   imports: [
     BrowserModule,

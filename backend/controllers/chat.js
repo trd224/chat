@@ -1,4 +1,5 @@
 const Message = require("../models/message");
+const path = require('path');
 
 async function chatHistory(req, res){
     const { sender, receiver } = req.params;
@@ -13,8 +14,26 @@ async function chatHistory(req, res){
 
 async function uploadFile(req, res){
   console.log(req.file);
+  const fileName = req.file.filename;
   const fileUrl = `http://localhost:4001/${req.file.filename}`;
-  res.json({ fileUrl });
+  res.json({ fileName, fileUrl });
 }
 
-module.exports = { chatHistory, uploadFile }
+async function downloadFile(req, res){
+  const filePath = path.join(__dirname, '..', 'uploads', path.basename(req.body.filePath)); // Extract filename from URL
+    console.log('File path:', filePath);
+
+    res.download(filePath, (err) => {
+        if (err) {
+            console.error('Error while downloading file:', err);
+            res.status(500).send('Error downloading file');
+        }
+    });
+
+  
+
+}
+
+
+
+module.exports = { chatHistory, uploadFile, downloadFile }

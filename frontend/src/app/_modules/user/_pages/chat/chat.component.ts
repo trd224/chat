@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '../../_services/chat.service';
 import { AuthService } from 'src/app/_shared/_services/auth.service';
 import { ApiService } from 'src/app/_shared/_services/api.service';
@@ -22,6 +22,8 @@ export class ChatComponent implements OnInit {
   loading: boolean = false;  // Add loading state
   fileToUpload: File | null = null; // For file upload
 
+  @ViewChild('inputFile') inputFile!: ElementRef;
+
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
@@ -34,6 +36,8 @@ export class ChatComponent implements OnInit {
       this.sender = this.currentUser?.email;
     });
   }
+
+
 
   ngOnInit(): void {
     this.apiService.get(API_ENDPOINTS.user.all).subscribe(res => {
@@ -55,7 +59,7 @@ export class ChatComponent implements OnInit {
       if(this.sender == msg.sender || msg.sender == this.receiver){
         this.messages.push(msg); // Automatically update the view
       }
-      
+    
       
     });
 
@@ -121,6 +125,7 @@ export class ChatComponent implements OnInit {
   sendFile(): void {
     if (this.fileToUpload) {
       this.chatService.uploadFile(this.fileToUpload).subscribe((response: any) => {
+        const fileName = response.fileName;
         const fileUrl = response.fileUrl;
         const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
 
@@ -128,10 +133,11 @@ export class ChatComponent implements OnInit {
         console.log(typeof fileType);
 
         // Send the file via socket
-        this.chatService.sendFile(this.sender, this.receiver, fileUrl, fileType);
+        this.chatService.sendFile(this.sender, this.receiver,fileName, fileUrl, fileType);
 
         // Reset file input
         this.fileToUpload = null;
+        this.inputFile.nativeElement.value = '';
       });
     }
   }
@@ -139,5 +145,28 @@ export class ChatComponent implements OnInit {
    // Trigger typing event
    onTyping(): void {
     this.chatService.typing(this.sender, this.receiver);
+  }
+
+  // downloadFile(data:any){
+  //   console.log("AAAAAAAAA");
+  //   this.chatService.downloadFile(data.fileUrl).subscribe(res => {
+  //     console.log(res);
+  //   })
+  // }
+
+  downloadFile(data:any) {
+    this.chatService.downloadFile(data.fileUrl).subscribe((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const timestamp = new Date().toISOString().replace(/[-:.]/g, ""); // Remove special characters
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = timestamp; // Specify the download filename
+      a.click();
+      window.URL.revokeObjectURL(url); // Cleanup the URL object after download
+    }, error => {
+      console.error('Download error:', error);
+    });
   }
 }

@@ -6,6 +6,8 @@
 .chatSection{margin-left: 200px;margin-top: 50px;
   h2{margin-bottom: 30px;}
 }
+.fileDiv{display: inline-block;}
+.fileDivInner{display: inline-block;}
 .uploadedImg{width: 200px;}
 ul {
     list-style: none;
@@ -39,4 +41,8 @@ ul {
   }
 
   .receiver{text-align: right;}
+  .downloadIcon{width: 30px;cursor: pointer;}
+  .fileBox{border: solid 1px #ccc;display: inline-block;    padding: 5px;
+    border-radius: 5px;
+    max-width: 200px;}
   

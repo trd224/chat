@@ -60,19 +60,19 @@ const initSocket = async (server) => {
       // Handle photo/file sending
       socket.on('file upload', async (data) => {
         console.log(data);
-        const { sender, receiver, fileUrl, fileType } = data;
+        const { sender, receiver, fileName, fileUrl, fileType } = data;
 
         // Store the file metadata (e.g., fileUrl, fileType) in MongoDB
-        const newMessage = new Message({ sender, receiver, message: `${fileType} uploaded`, fileUrl, fileType });
+        const newMessage = new Message({ sender, receiver, message: `${fileType} uploaded`, fileName, fileUrl, fileType });
         await newMessage.save();
 
         const receiverSocketId = connectedUsers.get(receiver);
 
         // Emit file to the sender and receiver
         if (receiverSocketId) {
-          io.to(receiverSocketId).emit('file upload', { sender, receiver, fileUrl, fileType });
+          io.to(receiverSocketId).emit('file upload', { sender, receiver, fileName, fileUrl, fileType });
         }
-        socket.emit('file upload', { sender, receiver, fileUrl, fileType });
+        socket.emit('file upload', { sender, receiver, fileName, fileUrl, fileType });
       });
 
 

@@ -22,7 +22,17 @@
           <li [ngClass]="{ 'receiver': currentUser?.email !== msg.sender}">
             <strong>{{ msg.sender }}:</strong> 
             <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
-            <img *ngIf="msg.fileUrl" class="uploadedImg" [src]="msg.fileUrl" alt="">
+            <div class="fileDiv" *ngIf="msg.fileUrl">
+              <div class="fileDivInner" *ngIf="msg.fileType == 'image'">
+                <img  class="uploadedImg" [src]="msg.fileUrl" alt="">
+              </div>
+              <div class="fileDivInner" *ngIf="msg.fileType !== 'image'">
+                <div class="fileBox">{{msg.fileName}}</div>
+              </div>
+              <img src="assets/images/download.png" *ngIf="sender == msg.receiver " alt="" class="downloadIcon" (click)="downloadFile(msg)">
+            </div>
+            
+            
           </li>
         </ng-container>
       </ul>
@@ -40,7 +50,7 @@
 
 
       <!-- File Upload -->
-      <input type="file" (change)="handleFileInput($event)" />
+      <input type="file" (change)="handleFileInput($event)" #inputFile/>
       <button (click)="sendFile()">Send File</button>
 
     </div>

@@ -58,9 +58,9 @@ export class ChatService {
   
 
    // Emit the "file upload" event to the server
-   sendFile(sender: string, receiver: string, fileUrl: string, fileType: string) {
+   sendFile(sender: string, receiver: string, fileName: string, fileUrl: string, fileType: string) {
     console.log(sender, receiver, fileUrl, fileType);
-    this.socket.emit('file upload', { sender, receiver, fileUrl, fileType });
+    this.socket.emit('file upload', { sender, receiver, fileName, fileUrl, fileType });
   }
 
   // Upload file to server
@@ -68,7 +68,18 @@ export class ChatService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post(`${environment.baseUrl}chat/upload`, formData);
+    return this.http.post(`${environment.baseUrl}api/chat/upload`, formData);
+  }
+
+
+  downloadFile(fileUrl: string): Observable<any> {
+    const payload = {
+      filePath: fileUrl
+    }
+    
+    return this.http.post(`${environment.baseUrl}api/chat/download`, payload, {
+      responseType: 'blob' // Set response type to 'blob' to handle binary data
+    });
   }
 
   // Listen for typing events

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { chatHistory, uploadFile } = require("../controllers/chat");
+const { chatHistory, uploadFile, downloadFile } = require("../controllers/chat");
 const { authenticate } = require("../middlewares/auth");
 const  upload  = require("../middlewares/multer");
 
@@ -8,6 +8,8 @@ const  upload  = require("../middlewares/multer");
 router.get('/history/:sender/:receiver', authenticate, chatHistory);
 
 router.post('/upload', upload.single('file'), uploadFile);
+
+router.post('/download', authenticate, downloadFile);
 
 
 
