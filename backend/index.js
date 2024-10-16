@@ -6,13 +6,13 @@ const cors = require("cors");
 const path = require('path');
 const app = express();
 const server = http.createServer(app);
-
-const PORT = 4001;
+//const PORT = 4001;
+require("dotenv").config();
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'uploads')));
 
-connectTOMongoDB("mongodb://127.0.0.1:27017/fullstackTest")
+connectTOMongoDB(process.env.LOCAL_MONGODB)
   .then(() => console.log("connected to mongodb"))
   .catch((err) => console.log(err));
 
@@ -29,4 +29,4 @@ initSocket(server);
 app.use("/api/user", require("./routers/user"));
 app.use("/api/chat", require("./routers/chat"));
 
-server.listen(PORT, () => console.log(`server running on port ${PORT}`));
+server.listen(process.env.PORT, () => console.log(`server running on port ${process.env.PORT}`));
