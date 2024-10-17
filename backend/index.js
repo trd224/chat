@@ -1,12 +1,12 @@
 const express = require("express");
 const http = require('http');
-const connectTOMongoDB = require("./connections/dbConnection");
-const { initSocket } = require("./socket");
+const connectTOMongoDB = require("./src/connections/dbConnection");
+const { initSocket } = require("./src/socket");
 const cors = require("cors");
 const path = require('path');
 const app = express();
 const server = http.createServer(app);
-const { PORT, LOCAL_MONGODB, ORIGIN } = require('./configs/envConfig');
+const { PORT, LOCAL_MONGODB, ORIGIN } = require('./src/configs/envConfig');
 
 ///////////////////
 
@@ -31,8 +31,8 @@ initSocket(server);
 
 ///////////////////
 
-app.use("/api/user", require("./routers/user"));
-app.use("/api/chat", require("./routers/chat"));
+app.use("/api/user", require("./src/routers/user"));
+app.use("/api/chat", require("./src/routers/chat"));
 
 ///////////////////
 

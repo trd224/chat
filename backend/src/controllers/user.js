@@ -19,13 +19,11 @@ async function userSignUp(req, res){
 
 
 async function userLogin(req, res){
-    console.log( req.body);
     try{
         const {email, password} = req.body;
         const user = await User.findOne({email, password});
         if(!user) return res.status(404).json({message: "User not found"})
         const token = setUser(user);
-         console.log(token);
         return res.status(200).json({email: email, token: token});
     }
     catch(err){

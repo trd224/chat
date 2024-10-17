@@ -40,7 +40,6 @@ const initSocket = async (server) => {
     
       // Listen for new chat messages
       socket.on('private message', async (data) => {
-        console.log(data);
         const { sender, receiver, message } = data;
 
         // Store the message in MongoDB
@@ -61,7 +60,6 @@ const initSocket = async (server) => {
 
       // Handle photo/file sending
       socket.on('file upload', async (data) => {
-        console.log(data);
         const { sender, receiver, fileName, fileUrl, fileType } = data;
 
         // Store the file metadata (e.g., fileUrl, fileType) in MongoDB

@@ -13,15 +13,13 @@ async function chatHistory(req, res){
 }
 
 async function uploadFile(req, res){
-  console.log(req.file);
   const fileName = req.file.filename;
   const fileUrl = `${req.file.filename}`;
   res.json({ fileName, fileUrl });
 }
 
 async function downloadFile(req, res){
-  const filePath = path.join(__dirname, '..', 'uploads/file', path.basename(req.body.filePath)); // Extract filename from URL
-    console.log('File path:', filePath);
+  const filePath = path.join(__dirname, '../../', 'uploads/file', path.basename(req.body.filePath)); // Extract filename from URL
 
     res.download(filePath, (err) => {
         if (err) {
