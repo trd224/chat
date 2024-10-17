@@ -10,7 +10,7 @@ dotenv.config({ path: path.resolve(__dirname,'..', envFile) });
 
 module.exports = {
     LOCAL_MONGODB: process.env.LOCAL_MONGODB,
-    DOMAIN: process.env.DOMAIN,
+    ORIGIN: process.env.ORIGIN,
     API_URL: process.env.API_URL,
     SECRET: process.env.SECRET,
     NODE_ENV: process.env.NODE_ENV,

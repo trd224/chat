@@ -11,10 +11,10 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   // getAllUsers(api_endpoint: string): Observable<any>{
-  //   return this.http.get(environment.baseUrl + api_endpoint);
+  //   return this.http.get(environment.apiUrl + api_endpoint);
   // }
 
   // getUserById(api_endpoint: string): Observable<any>{
-  //   return this.http.get(environment.baseUrl + api_endpoint);
+  //   return this.http.get(environment.apiUrl + api_endpoint);
   // }
 }

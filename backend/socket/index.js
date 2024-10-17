@@ -1,5 +1,6 @@
 const Chat = require("../models/chat");
 const socketIo = require('socket.io');
+const { ORIGIN } = require('../configs/envConfig');
 
 let io;
 const connectedUsers = new Map(); // Map to track socket.id to user.email
@@ -10,7 +11,7 @@ const connectedUsers = new Map(); // Map to track socket.id to user.email
 const initSocket = async (server) => {
   io = socketIo(server, {
     cors: {
-      origin: 'http://localhost:4300', // Adjust according to your frontend URL
+      origin: ORIGIN, // Adjust according to your frontend URL
       methods: ['GET', 'POST'],
       credentials: true
     }
@@ -39,6 +40,7 @@ const initSocket = async (server) => {
     
       // Listen for new chat messages
       socket.on('private message', async (data) => {
+        console.log(data);
         const { sender, receiver, message } = data;
 
         // Store the message in MongoDB

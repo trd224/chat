@@ -24,13 +24,13 @@ export class AuthService {
 
 
   signup(api_endpoint: string, payload: any): Observable<any>{
-    return this.http.post(environment.baseUrl + api_endpoint, payload);
+    return this.http.post(environment.apiUrl + api_endpoint, payload);
   }
 
   login(api_endpoint: string, payload: any): Observable<any>{
     console.log(api_endpoint)
     console.log(payload)
-    return this.http.post(environment.baseUrl + api_endpoint, payload).pipe(
+    return this.http.post(environment.apiUrl + api_endpoint, payload).pipe(
       map((user:any) => {
         if(user && user?.token){
           localStorage.setItem("user", JSON.stringify(user));

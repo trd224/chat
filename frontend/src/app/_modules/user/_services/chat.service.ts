@@ -11,9 +11,10 @@ export class ChatService {
   private socket: Socket;
 
   constructor(private http: HttpClient) {
-    this.socket = io(environment.baseUrl, {
+    this.socket = io(environment.serverIp, {
       transports: ['websocket'], // Ensure websocket transport is used
     });
+    
   }
 
    // Emit the "typing" event to the server
@@ -27,11 +28,12 @@ export class ChatService {
   }
 
   getHistory(sender: string, receiver: string): Observable<any> {
-    return this.http.get(`${environment.baseUrl}api/chat/history/${sender}/${receiver}`);
+    return this.http.get(`${environment.apiUrl}chat/history/${sender}/${receiver}`);
   }
 
   // Emit a private message to the server
   sendMessage(sender: string, receiver: string, message: string) {
+    console.log(sender, receiver, message);
     this.socket.emit('private message', { sender, receiver, message });
   }
   
@@ -68,7 +70,7 @@ export class ChatService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post(`${environment.baseUrl}api/chat/upload`, formData);
+    return this.http.post(`${environment.apiUrl}chat/upload`, formData);
   }
 
 
@@ -77,7 +79,7 @@ export class ChatService {
       filePath: fileUrl
     }
     
-    return this.http.post(`${environment.baseUrl}api/chat/download`, payload, {
+    return this.http.post(`${environment.apiUrl}chat/download`, payload, {
       responseType: 'blob' // Set response type to 'blob' to handle binary data
     });
   }

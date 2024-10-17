@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/_shared/_services/auth.service';
 import { ApiService } from 'src/app/_shared/_services/api.service';
 import { API_ENDPOINTS } from 'src/app/_shared/_config/const';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-chat',
@@ -21,6 +22,7 @@ export class ChatComponent implements OnInit {
   typingIndicator: string = ''; // Indicator for typing status
   loading: boolean = false; // Add loading state
   fileToUpload: File | null = null; // For file upload
+  FILE_URL = environment.fileUrl;
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
@@ -118,9 +120,7 @@ export class ChatComponent implements OnInit {
   // Upload and send file
   sendFile(): void {
     if (this.fileToUpload) {
-      this.chatService
-        .uploadFile(this.fileToUpload)
-        .subscribe((response: any) => {
+      this.chatService.uploadFile(this.fileToUpload).subscribe((response: any) => {
           const fileName = response.fileName;
           const fileUrl = response.fileUrl;
           const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
@@ -144,6 +144,7 @@ export class ChatComponent implements OnInit {
   downloadFile(data: any) {
     this.chatService.downloadFile(data.fileUrl).subscribe(
       (blob: Blob) => {
+        console.log(blob);
         const url = window.URL.createObjectURL(blob);
         const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
         const a = document.createElement('a');

@@ -6,7 +6,7 @@ const cors = require("cors");
 const path = require('path');
 const app = express();
 const server = http.createServer(app);
-const { PORT, LOCAL_MONGODB } = require('./configs/envConfig');
+const { PORT, LOCAL_MONGODB, ORIGIN } = require('./configs/envConfig');
 
 ///////////////////
 
@@ -16,9 +16,9 @@ connectTOMongoDB(LOCAL_MONGODB)
 
 ///////////////////
 
-app.use(express.static(path.join(__dirname, 'uploads')));
+app.use('/file', express.static(path.join(__dirname, 'uploads/file')));
 app.use(cors({
-  origin: 'http://localhost:4300', 
+  origin: ORIGIN, 
   methods: ['GET', 'POST'], 
   credentials: true 
 }));

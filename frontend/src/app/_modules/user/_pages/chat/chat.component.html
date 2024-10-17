@@ -24,7 +24,7 @@
             <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
             <div class="fileDiv" *ngIf="msg.fileUrl">
               <div class="fileDivInner" *ngIf="msg.fileType == 'image'">
-                <img  class="uploadedImg" [src]="msg.fileUrl" alt="">
+                <img  class="uploadedImg" [src]="FILE_URL + msg.fileUrl" alt="">
               </div>
               <div class="fileDivInner" *ngIf="msg.fileType !== 'image'">
                 <div class="fileBox">{{msg.fileName}}</div>
