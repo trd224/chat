@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require('http');
-const connectTOMongoDB = require("./src/connections/dbConnection");
+const dbConnection = require("./src/connections/dbConnection");
 const { initSocket } = require("./src/socket");
 const cors = require("cors");
 const path = require('path');
@@ -10,7 +10,7 @@ const { PORT, DATABASE_MONGODB, ORIGIN } = require('./src/configs/envConfig');
 
 ///////////////////
 
-connectTOMongoDB(DATABASE_MONGODB)
+dbConnection(DATABASE_MONGODB)
   .then(() => console.log("connected to mongodb"))
   .catch((err) => console.log(err));
 
