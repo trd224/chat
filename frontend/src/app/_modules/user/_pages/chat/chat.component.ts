@@ -2,13 +2,13 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '../../_services/chat.service';
 import { AuthService } from 'src/app/_shared/_services/auth.service';
 import { ApiService } from 'src/app/_shared/_services/api.service';
-import { API_ENDPOINTS } from 'src/app/_shared/_config/const'; 
+import { API_ENDPOINTS } from 'src/app/_shared/_config/const';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit {
   users!: any[];
@@ -19,7 +19,7 @@ export class ChatComponent implements OnInit {
   // uploadedFiles: Array<any> = [];
   currentUser: any;
   typingIndicator: string = ''; // Indicator for typing status
-  loading: boolean = false;  // Add loading state
+  loading: boolean = false; // Add loading state
   fileToUpload: File | null = null; // For file upload
 
   @ViewChild('inputFile') inputFile!: ElementRef;
@@ -31,16 +31,14 @@ export class ChatComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.authService.currentUser.subscribe(user => {
+    this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
       this.sender = this.currentUser?.email;
     });
   }
 
-
-
   ngOnInit(): void {
-    this.apiService.get(API_ENDPOINTS.user.all).subscribe(res => {
+    this.apiService.get(API_ENDPOINTS.user.all).subscribe((res) => {
       this.users = res;
     });
 
@@ -49,18 +47,9 @@ export class ChatComponent implements OnInit {
 
     // Listen for new messages
     this.chatService.receiveMessages().subscribe((msg: any) => {
-      //alert("sdsdsd")
-      // console.log('Received message:', msg);
-      // console.log(this.messages);
-      console.log(msg.sender)
-      console.log(msg.receiver)
-      console.log(this.receiver);
-   
-      if(this.sender == msg.sender || msg.sender == this.receiver){
+      if (this.sender == msg.sender || msg.sender == this.receiver) {
         this.messages.push(msg); // Automatically update the view
       }
-    
-      
     });
 
     // Listen for new messages
@@ -80,30 +69,36 @@ export class ChatComponent implements OnInit {
       }, 3000); // Adjust the timeout as needed
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.receiver = params['receiver'];
-      this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
-        console.log(history);
-        this.messages = history;
-      });
+      if(this.receiver){
+        this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
+          console.log(history);
+          this.messages = history;
+        });
+      }
+      
     });
   }
 
   // Fetch chat history
   fetchHistory(receiver: any): void {
-    this.loading = true;  // Set loading to true when fetching history
+    this.loading = true; // Set loading to true when fetching history
     this.receiver = receiver.email;
-    this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
-      this.messages = history;
-      this.loading = false;  // Stop loading when data is fetched
-    }, () => {
-      this.loading = false;  // Ensure loading stops if there's an error
-    });
+    this.chatService.getHistory(this.sender, this.receiver).subscribe(
+      (history: any) => {
+        this.messages = history;
+        this.loading = false; // Stop loading when data is fetched
+      },
+      () => {
+        this.loading = false; // Ensure loading stops if there's an error
+      }
+    );
   }
 
   goToChat(receiver: any) {
-    this.router.navigate(["/users/chat"], {
-      queryParams: { 'receiver': receiver.email }
+    this.router.navigate(['/users/chat'], {
+      queryParams: { receiver: receiver.email },
     });
   }
 
@@ -118,55 +113,48 @@ export class ChatComponent implements OnInit {
   // Handle file selection
   handleFileInput(event: any): void {
     this.fileToUpload = event.target.files[0];
-    console.log(this.fileToUpload);
   }
 
   // Upload and send file
   sendFile(): void {
     if (this.fileToUpload) {
-      this.chatService.uploadFile(this.fileToUpload).subscribe((response: any) => {
-        const fileName = response.fileName;
-        const fileUrl = response.fileUrl;
-        const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
+      this.chatService
+        .uploadFile(this.fileToUpload)
+        .subscribe((response: any) => {
+          const fileName = response.fileName;
+          const fileUrl = response.fileUrl;
+          const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
 
-        console.log(fileUrl)
-        console.log(typeof fileType);
+          // Send the file via socket
+          this.chatService.sendFile(this.sender, this.receiver, fileName, fileUrl, fileType);
 
-        // Send the file via socket
-        this.chatService.sendFile(this.sender, this.receiver,fileName, fileUrl, fileType);
-
-        // Reset file input
-        this.fileToUpload = null;
-        this.inputFile.nativeElement.value = '';
-      });
+          // Reset file input
+          this.fileToUpload = null;
+          this.inputFile.nativeElement.value = '';
+        });
     }
   }
 
-   // Trigger typing event
-   onTyping(): void {
+  // Trigger typing event
+  onTyping(): void {
     this.chatService.typing(this.sender, this.receiver);
   }
 
-  // downloadFile(data:any){
-  //   console.log("AAAAAAAAA");
-  //   this.chatService.downloadFile(data.fileUrl).subscribe(res => {
-  //     console.log(res);
-  //   })
-  // }
 
-  downloadFile(data:any) {
-    this.chatService.downloadFile(data.fileUrl).subscribe((blob: Blob) => {
-      const url = window.URL.createObjectURL(blob);
-
-      const timestamp = new Date().toISOString().replace(/[-:.]/g, ""); // Remove special characters
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = timestamp; // Specify the download filename
-      a.click();
-      window.URL.revokeObjectURL(url); // Cleanup the URL object after download
-    }, error => {
-      console.error('Download error:', error);
-    });
+  downloadFile(data: any) {
+    this.chatService.downloadFile(data.fileUrl).subscribe(
+      (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = timestamp; // Specify the download filename
+        a.click();
+        window.URL.revokeObjectURL(url); // Cleanup the URL object after download
+      },
+      (error) => {
+        console.error('Download error:', error);
+      }
+    );
   }
 }

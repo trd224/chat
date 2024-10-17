@@ -5,7 +5,6 @@ const { authenticate } = require("../middlewares/auth");
 
 router.post("/signup", userSignUp)
 router.post("/login", userLogin)
-
 router.get("/all", getAllUsers)
 router.get("/current", authenticate, getCurrentUsers)
 router.get("/:id", authenticate, getUserById)

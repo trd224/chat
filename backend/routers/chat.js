@@ -6,9 +6,7 @@ const  upload  = require("../middlewares/multer");
 
 
 router.get('/history/:sender/:receiver', authenticate, chatHistory);
-
 router.post('/upload', upload.single('file'), uploadFile);
-
 router.post('/download', authenticate, downloadFile);
 
 

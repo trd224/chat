@@ -1,5 +1,6 @@
 const Chat = require("../models/chat");
 const path = require('path');
+const { DOMAIN } = require('../configs/envConfig');
 
 async function chatHistory(req, res){
     const { sender, receiver } = req.params;
@@ -15,7 +16,7 @@ async function chatHistory(req, res){
 async function uploadFile(req, res){
   console.log(req.file);
   const fileName = req.file.filename;
-  const fileUrl = `http://localhost:4001/${req.file.filename}`;
+  const fileUrl = `${DOMAIN}${req.file.filename}`;
   res.json({ fileName, fileUrl });
 }
 

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { SECRET } = require('../configs/envConfig');
 
 function setUser(user){
     try{
@@ -6,7 +7,7 @@ function setUser(user){
             _id: user._id,
             email: user.email
         }
-        return jwt.sign(payload, process.env.SECRET);
+        return jwt.sign(payload, SECRET);
     }
     catch(err){
         return null;
@@ -16,7 +17,7 @@ function setUser(user){
 
 function getUser(token){
     try{
-        return jwt.verify(token, process.env.SECRET);
+        return jwt.verify(token, SECRET);
     }
     catch(err){
         return null;

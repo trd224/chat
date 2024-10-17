@@ -1,32 +1,39 @@
 const express = require("express");
 const http = require('http');
-const connectTOMongoDB = require("./connection/dbConnection");
+const connectTOMongoDB = require("./connections/dbConnection");
 const { initSocket } = require("./socket");
 const cors = require("cors");
 const path = require('path');
 const app = express();
 const server = http.createServer(app);
-//const PORT = 4001;
-require("dotenv").config();
+const { PORT, LOCAL_MONGODB } = require('./configs/envConfig');
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'uploads')));
+///////////////////
 
-connectTOMongoDB(process.env.LOCAL_MONGODB)
+connectTOMongoDB(LOCAL_MONGODB)
   .then(() => console.log("connected to mongodb"))
   .catch((err) => console.log(err));
 
+///////////////////
+
+app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(cors({
-  origin: 'http://localhost:4300', // Allow requests from this origin
-  methods: ['GET', 'POST'], // Specify the allowed methods
-  credentials: true // Allow credentials (if needed)
+  origin: 'http://localhost:4300', 
+  methods: ['GET', 'POST'], 
+  credentials: true 
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+///////////////////
+
 initSocket(server);
+
+///////////////////
 
 app.use("/api/user", require("./routers/user"));
 app.use("/api/chat", require("./routers/chat"));
 
-server.listen(process.env.PORT, () => console.log(`server running on port ${process.env.PORT}`));
+///////////////////
+
+server.listen(PORT, () => console.log(`server running on port ${PORT}`));
