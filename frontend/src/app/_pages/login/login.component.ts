@@ -35,8 +35,6 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
-    //console.log(this.loginForm.value)
-    
     this.submitted = true;
 
     if(this.loginForm.invalid){
@@ -46,7 +44,6 @@ export class LoginComponent implements OnInit {
     let formData = this.loginForm.value;
 
     this.authService.login(API_ENDPOINTS.user.login, formData).subscribe(res => {
-      //console.log("dddddddddddddddddddddddddddddddddddddddddd",res);
       if(res && res.token){
         this.router.navigate(["/users/chat"]);
       }

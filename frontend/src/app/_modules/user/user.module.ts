@@ -23,6 +23,6 @@ import { ChatComponent } from './_pages/chat/chat.component';
 })
 export class UserModule { 
   constructor(){
-    //console.log("user module loaded")
+    console.log("user module loaded")
   }
 }

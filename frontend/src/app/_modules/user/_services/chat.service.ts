@@ -33,7 +33,6 @@ export class ChatService {
 
   // Emit a private message to the server
   sendMessage(sender: string, receiver: string, message: string) {
-    console.log(sender, receiver, message);
     this.socket.emit('private message', { sender, receiver, message });
   }
   
@@ -42,7 +41,6 @@ export class ChatService {
   receiveMessages(): Observable<any> {
     return new Observable((observer) => {
       this.socket.on('private message', (msg) => { // Listen for the correct event
-        console.log("BBBBBBBBBBBBBBBBBB", msg);
         observer.next(msg);
       });
     });
@@ -61,7 +59,6 @@ export class ChatService {
 
    // Emit the "file upload" event to the server
    sendFile(sender: string, receiver: string, fileName: string, fileUrl: string, fileType: string) {
-    console.log(sender, receiver, fileUrl, fileType);
     this.socket.emit('file upload', { sender, receiver, fileName, fileUrl, fileType });
   }
 

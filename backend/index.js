@@ -6,11 +6,11 @@ const cors = require("cors");
 const path = require('path');
 const app = express();
 const server = http.createServer(app);
-const { PORT, LOCAL_MONGODB, ORIGIN } = require('./src/configs/envConfig');
+const { PORT, DATABASE_MONGODB, ORIGIN } = require('./src/configs/envConfig');
 
 ///////////////////
 
-connectTOMongoDB(LOCAL_MONGODB)
+connectTOMongoDB(DATABASE_MONGODB)
   .then(() => console.log("connected to mongodb"))
   .catch((err) => console.log(err));
 

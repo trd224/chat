@@ -56,8 +56,6 @@ export class ChatComponent implements OnInit {
 
     // Listen for new messages
     this.chatService.receiveUploadedFile().subscribe((msg: any) => {
-      console.log('file upload:', msg);
-      // console.log(this.messages);
       this.messages.push(msg); // Automatically update the view
     });
 
@@ -75,7 +73,6 @@ export class ChatComponent implements OnInit {
       this.receiver = params['receiver'];
       if(this.receiver){
         this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
-          console.log(history);
           this.messages = history;
         });
       }
@@ -144,7 +141,6 @@ export class ChatComponent implements OnInit {
   downloadFile(data: any) {
     this.chatService.downloadFile(data.fileUrl).subscribe(
       (blob: Blob) => {
-        console.log(blob);
         const url = window.URL.createObjectURL(blob);
         const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
         const a = document.createElement('a');

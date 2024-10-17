@@ -28,13 +28,10 @@ export class AuthService {
   }
 
   login(api_endpoint: string, payload: any): Observable<any>{
-    console.log(api_endpoint)
-    console.log(payload)
     return this.http.post(environment.apiUrl + api_endpoint, payload).pipe(
       map((user:any) => {
         if(user && user?.token){
           localStorage.setItem("user", JSON.stringify(user));
-          //console.log("1111111111111111111111111111111111111");
           this.currentUserSubject.next(user);
         }
         return user;

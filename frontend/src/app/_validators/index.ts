@@ -1,7 +1,6 @@
 import { AbstractControl } from "@angular/forms";
 
 export function mobileNumberValidator(control: AbstractControl){
-    //console.log(control.value);
     if(control && (control.value !== null && control.value !== undefined)){
         const regex = new RegExp('^[6-9]{1}[0-9]{9}$');
 
