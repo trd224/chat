@@ -26,6 +26,7 @@ export class ChatComponent implements OnInit {
   FILE_URL = environment.fileUrl;
   downloadProgressMap: { [fileUrl: string]: number } = {}; // Track progress for each file
   downloadSubscriptions: { [fileUrl: string]: any } = {};
+  fileOpenLoading: { [fileUrl: string]: boolean } = {};
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
@@ -74,12 +75,13 @@ export class ChatComponent implements OnInit {
 
     this.route.queryParams.subscribe((params) => {
       this.receiver = params['receiver'];
-      if(this.receiver){
-        this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
-          this.messages = history;
-        });
+      if (this.receiver) {
+        this.chatService
+          .getHistory(this.sender, this.receiver)
+          .subscribe((history: any) => {
+            this.messages = history;
+          });
       }
-      
     });
   }
 
@@ -120,13 +122,21 @@ export class ChatComponent implements OnInit {
   // Upload and send file
   sendFile(): void {
     if (this.fileToUpload) {
-      this.chatService.uploadFile(this.fileToUpload).subscribe((response: any) => {
+      this.chatService
+        .uploadFile(this.fileToUpload)
+        .subscribe((response: any) => {
           const fileName = response.fileName;
           const fileUrl = response.fileUrl;
           const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
 
           // Send the file via socket
-          this.chatService.sendFile(this.sender, this.receiver, fileName, fileUrl, fileType);
+          this.chatService.sendFile(
+            this.sender,
+            this.receiver,
+            fileName,
+            fileUrl,
+            fileType
+          );
 
           // Reset file input
           this.fileToUpload = null;
@@ -143,55 +153,68 @@ export class ChatComponent implements OnInit {
   downloadFile(data: any) {
     const fileUrl = data.fileUrl;
     this.downloadProgressMap[fileUrl] = 0; // Initialize progress for this file
-    const downloadSubscription = this.chatService.downloadFile(data.fileUrl).subscribe(
-      (event) => {
-        console.log(event);
-        if (event.type === HttpEventType.DownloadProgress) {
-          this.downloadProgressMap[fileUrl] = Math.round((event.loaded / (event.total || 1)) * 100);
-          console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
-          // You can update a progress bar or display the progress here
-        } else if (event instanceof HttpResponse) {
-          const blob: Blob = event.body as Blob;
-          const url = window.URL.createObjectURL(blob);
-          const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = timestamp; // Specify the download filename
-          a.click();
-          window.URL.revokeObjectURL(url); // Cleanup the URL object after download
+    const downloadSubscription = this.chatService
+      .downloadFile(data.fileUrl)
+      .subscribe(
+        (event) => {
+          console.log(event);
+          if (event.type === HttpEventType.DownloadProgress) {
+
+            // if (event.total) {
+            //   // If the total size is available, calculate progress
+            //   this.downloadProgressMap[fileUrl] = Math.round((event.loaded / event.total) * 100);
+            // } else {
+            //   // If total size is not available, set progress manually or log for debugging
+            //   console.warn('Total size is unavailable, cannot track download progress accurately.');
+            // }
+
+            this.downloadProgressMap[fileUrl] = Math.round((event.loaded / (event.total)) * 100);
+            console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
+            // You can update a progress bar or display the progress here
+          } else if (event instanceof HttpResponse) {
+            const blob: Blob = event.body as Blob;
+            const url = window.URL.createObjectURL(blob);
+            const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = timestamp; // Specify the download filename
+            a.click();
+            window.URL.revokeObjectURL(url); // Cleanup the URL object after download
+            delete this.downloadProgressMap[fileUrl];
+          }
+        },
+        (error) => {
+          console.error('Download error:', error);
           delete this.downloadProgressMap[fileUrl];
         }
-      },
-      (error) => {
-        console.error('Download error:', error);
-        delete this.downloadProgressMap[fileUrl];
-      }
-    );
+      );
 
     // Store the subscription for future cancellation
     this.downloadSubscriptions[fileUrl] = downloadSubscription;
   }
 
-
   // Method to cancel the download
-cancelDownload(fileUrl: string) {
-  const downloadSubscription = this.downloadSubscriptions[fileUrl];
-  if (downloadSubscription) {
-    downloadSubscription.unsubscribe(); // Cancel the download
-    delete this.downloadProgressMap[fileUrl]; // Remove progress tracking
-    delete this.downloadSubscriptions[fileUrl]; // Clean up subscription reference
-    console.log(`Download for ${fileUrl} cancelled.`);
-  }
-}
-
-
-  openFile(fileUrl: string){
-    console.log(fileUrl);
-    this.chatService.openFile(fileUrl).subscribe(res => {
-      console.log('File opened successfully');
-    },error => {
-      console.error('Error opening file:', error);
-    })
+  cancelDownload(fileUrl: string) {
+    const downloadSubscription = this.downloadSubscriptions[fileUrl];
+    if (downloadSubscription) {
+      downloadSubscription.unsubscribe(); // Cancel the download
+      delete this.downloadProgressMap[fileUrl]; // Remove progress tracking
+      delete this.downloadSubscriptions[fileUrl]; // Clean up subscription reference
+      console.log(`Download for ${fileUrl} cancelled.`);
+    }
   }
 
+  openFile(fileUrl: string) {
+    this.fileOpenLoading[fileUrl] = true;
+    this.chatService.openFile(fileUrl).subscribe(
+      (res) => {
+        console.log('File opened successfully');
+        delete this.fileOpenLoading[fileUrl];
+      },
+      (error) => {
+        console.error('Error opening file:', error);
+        delete this.fileOpenLoading[fileUrl];
+      }
+    );
+  }
 }

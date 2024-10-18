@@ -1,76 +1,97 @@
 <div>
-    <div class="sideNav">
-      <ul>
-        <ng-container *ngFor="let user of users">
-          <li *ngIf="user?.email != currentUser?.email" [ngClass]="{ 'active': user?.email == receiver}" (click)="goToChat(user)">
-              <a>{{user.name}}</a>
-          </li>
-        </ng-container>
-        
+  <div class="sideNav">
+    <ul>
+      <ng-container *ngFor="let user of users">
+        <li
+          *ngIf="user?.email != currentUser?.email"
+          [ngClass]="{ active: user?.email == receiver }"
+          (click)="goToChat(user)"
+        >
+          <a>{{ user.name }}</a>
+        </li>
+      </ng-container>
     </ul>
-    </div>
-    <div class="chatSection" *ngIf="receiver">
-        <h2>Chat with {{ receiver }}</h2>
-      
-      <!-- <div>
+  </div>
+  <div class="chatSection" *ngIf="receiver">
+    <h2>Chat with {{ receiver }}</h2>
+
+    <!-- <div>
         <input [(ngModel)]="receiver" placeholder="Receiver's Username" />
         <button (click)="fetchHistory()">Load History</button>
       </div> -->
-    
-      <ul>
-        <ng-container *ngFor="let msg of messages">
-          <li [ngClass]="{ 'receiver': currentUser?.email !== msg.sender}">
-            <strong>{{ msg.sender }}:</strong> 
-            <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
-            <div class="fileDiv" *ngIf="msg.fileUrl">
-              <div class="fileDivInner" *ngIf="msg.fileType == 'image'" (click)="openFile(msg.fileUrl)">
-                <img  class="uploadedImg" [src]="FILE_URL + msg.fileUrl" alt="">
-              </div>
-              <div class="fileDivInner" *ngIf="msg.fileType !== 'image'" (click)="openFile(msg.fileUrl)">
-                <div class="fileBox" >{{msg.fileName}}</div>
-              </div>
-              <div class="dwn">
-                <div *ngIf="downloadProgressMap[msg.fileUrl] > 0" class="pbarWpr">
-                  <circle-progress
-                    [percent]="100"
-                    [radius]="25"
-                    [outerStrokeWidth]="4"
-                    [innerStrokeWidth]="2"
-                    [outerStrokeColor]="'#78C000'"
-                    [innerStrokeColor]="'#C7E596'"
-                    [animation]="true"
-                    [animationDuration]="300"
-                    [showSubtitle] =false
-                    [showInnerStroke]=false
-                ></circle-progress>
-                </div>
-                
-              <img src="assets/images/download.png" *ngIf="sender == msg.receiver && (!downloadProgressMap[msg.fileUrl] || downloadProgressMap[msg.fileUrl] === 0)"  alt="" class="downloadIcon" (click)="downloadFile(msg)">
-              </div>
-              
+
+    <ul>
+      <ng-container *ngFor="let msg of messages">
+        <li [ngClass]="{ receiver: currentUser?.email !== msg.sender }">
+          <strong>{{ msg.sender }}:</strong>
+          <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
+          <div class="fileDiv" *ngIf="msg.fileUrl">
+            <div
+              class="fileDivInner"
+              *ngIf="msg.fileType == 'image'"
+              (click)="openFile(msg.fileUrl)"
+            >
+              <img class="uploadedImg" [src]="FILE_URL + msg.fileUrl" alt="" />
+              <span *ngIf="fileOpenLoading[msg.fileUrl]" class="fileOpenLoading"
+                >Loading...</span
+              >
             </div>
-            
-            
-          </li>
-        </ng-container>
-      </ul>
+            <div
+              class="fileDivInner"
+              *ngIf="msg.fileType !== 'image'"
+              (click)="openFile(msg.fileUrl)"
+            >
+              <div class="fileBox">{{ msg.fileName }}</div>
+              <span *ngIf="fileOpenLoading[msg.fileUrl]" class="fileOpenLoading"
+                >Loading...</span
+              >
+            </div>
+            <div class="dwn">
+              <div *ngIf="downloadProgressMap[msg.fileUrl] > 0" class="pbarWpr">
+                <circle-progress
+                  [percent]="downloadProgressMap[msg.fileUrl]"
+                  [radius]="25"
+                  [outerStrokeWidth]="4"
+                  [innerStrokeWidth]="2"
+                  [outerStrokeColor]="'#78C000'"
+                  [innerStrokeColor]="'#C7E596'"
+                  [animation]="false"
+                  [showSubtitle]="false"
+                  [showInnerStroke]="false"
+                ></circle-progress>
+              </div>
 
-  
+              <img
+                src="assets/images/download.png"
+                *ngIf="
+                  sender == msg.receiver &&
+                  (!downloadProgressMap[msg.fileUrl] ||
+                    downloadProgressMap[msg.fileUrl] === 0)
+                "
+                alt=""
+                class="downloadIcon"
+                (click)="downloadFile(msg)"
+              />
+            </div>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
 
-        <!-- Typing Indicator -->
-      <div *ngIf="typingIndicator" class="typing-indicator">
-        <p>{{ typingIndicator }}</p>
-      </div>
-    
-      <input [(ngModel)]="message" placeholder="Type a message..." (input)="onTyping()"/>
-      <button (click)="sendMessage()">Send</button>
-
-
-
-      <!-- File Upload -->
-      <input type="file" (change)="handleFileInput($event)" #inputFile/>
-      <button (click)="sendFile()">Send File</button>
-
+    <!-- Typing Indicator -->
+    <div *ngIf="typingIndicator" class="typing-indicator">
+      <p>{{ typingIndicator }}</p>
     </div>
-    
+
+    <input
+      [(ngModel)]="message"
+      placeholder="Type a message..."
+      (input)="onTyping()"
+    />
+    <button (click)="sendMessage()">Send</button>
+
+    <!-- File Upload -->
+    <input type="file" (change)="handleFileInput($event)" #inputFile />
+    <button (click)="sendFile()">Send File</button>
   </div>
+</div>
