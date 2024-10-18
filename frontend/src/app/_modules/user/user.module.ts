@@ -5,6 +5,7 @@ import { UserRoutingModule } from './user-routing.module';
 import { UserComponent } from './_pages/user/user.component';
 import { DetailComponent } from './_pages/detail/detail.component';
 import { ChatComponent } from './_pages/chat/chat.component';
+import { NgCircleProgressModule } from 'ng-circle-progress';
 
 
 
@@ -18,7 +19,17 @@ import { ChatComponent } from './_pages/chat/chat.component';
   imports: [
     CommonModule,
     UserRoutingModule,
-    SharedModule
+    SharedModule,
+    NgCircleProgressModule.forRoot({
+      // set defaults here
+      radius: 50,
+      outerStrokeWidth: 4,
+      innerStrokeWidth: 2,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300,
+      titleFontSize: '15'
+    })
   ]
 })
 export class UserModule { 

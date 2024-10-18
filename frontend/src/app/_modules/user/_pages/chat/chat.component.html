@@ -29,7 +29,25 @@
               <div class="fileDivInner" *ngIf="msg.fileType !== 'image'" (click)="openFile(msg.fileUrl)">
                 <div class="fileBox" >{{msg.fileName}}</div>
               </div>
-              <img src="assets/images/download.png" *ngIf="sender == msg.receiver " alt="" class="downloadIcon" (click)="downloadFile(msg)">
+              <div class="dwn">
+                <div *ngIf="downloadProgressMap[msg.fileUrl] > 0" class="pbarWpr">
+                  <circle-progress
+                    [percent]="100"
+                    [radius]="25"
+                    [outerStrokeWidth]="4"
+                    [innerStrokeWidth]="2"
+                    [outerStrokeColor]="'#78C000'"
+                    [innerStrokeColor]="'#C7E596'"
+                    [animation]="true"
+                    [animationDuration]="300"
+                    [showSubtitle] =false
+                    [showInnerStroke]=false
+                ></circle-progress>
+                </div>
+                
+              <img src="assets/images/download.png" *ngIf="sender == msg.receiver && (!downloadProgressMap[msg.fileUrl] || downloadProgressMap[msg.fileUrl] === 0)"  alt="" class="downloadIcon" (click)="downloadFile(msg)">
+              </div>
+              
             </div>
             
             

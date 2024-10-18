@@ -5,6 +5,7 @@ import { ApiService } from 'src/app/_shared/_services/api.service';
 import { API_ENDPOINTS } from 'src/app/_shared/_config/const';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-chat',
@@ -23,6 +24,8 @@ export class ChatComponent implements OnInit {
   loading: boolean = false; // Add loading state
   fileToUpload: File | null = null; // For file upload
   FILE_URL = environment.fileUrl;
+  downloadProgressMap: { [fileUrl: string]: number } = {}; // Track progress for each file
+  downloadSubscriptions: { [fileUrl: string]: any } = {};
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
@@ -137,23 +140,49 @@ export class ChatComponent implements OnInit {
     this.chatService.typing(this.sender, this.receiver);
   }
 
-
   downloadFile(data: any) {
-    this.chatService.downloadFile(data.fileUrl).subscribe(
-      (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = timestamp; // Specify the download filename
-        a.click();
-        window.URL.revokeObjectURL(url); // Cleanup the URL object after download
+    const fileUrl = data.fileUrl;
+    this.downloadProgressMap[fileUrl] = 0; // Initialize progress for this file
+    const downloadSubscription = this.chatService.downloadFile(data.fileUrl).subscribe(
+      (event) => {
+        console.log(event);
+        if (event.type === HttpEventType.DownloadProgress) {
+          this.downloadProgressMap[fileUrl] = Math.round((event.loaded / (event.total || 1)) * 100);
+          console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
+          // You can update a progress bar or display the progress here
+        } else if (event instanceof HttpResponse) {
+          const blob: Blob = event.body as Blob;
+          const url = window.URL.createObjectURL(blob);
+          const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = timestamp; // Specify the download filename
+          a.click();
+          window.URL.revokeObjectURL(url); // Cleanup the URL object after download
+          delete this.downloadProgressMap[fileUrl];
+        }
       },
       (error) => {
         console.error('Download error:', error);
+        delete this.downloadProgressMap[fileUrl];
       }
     );
+
+    // Store the subscription for future cancellation
+    this.downloadSubscriptions[fileUrl] = downloadSubscription;
   }
+
+
+  // Method to cancel the download
+cancelDownload(fileUrl: string) {
+  const downloadSubscription = this.downloadSubscriptions[fileUrl];
+  if (downloadSubscription) {
+    downloadSubscription.unsubscribe(); // Cancel the download
+    delete this.downloadProgressMap[fileUrl]; // Remove progress tracking
+    delete this.downloadSubscriptions[fileUrl]; // Clean up subscription reference
+    console.log(`Download for ${fileUrl} cancelled.`);
+  }
+}
 
 
   openFile(fileUrl: string){

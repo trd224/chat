@@ -7,6 +7,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { JwtInterceptor } from 'src/app/_interceptors/jwt.interceptor';
 import { ErrorInterceptor } from 'src/app/_interceptors/error.interceptor';
 
+
 import { SharedModule } from './_shared/shared.module';
 import { AppComponent } from './app.component';
 import { LayoutComponent } from './_layout/layout.component';
@@ -45,7 +46,8 @@ import { LoginComponent } from './_pages/login/login.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    SharedModule
+    SharedModule,
+    
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass:JwtInterceptor, multi:true},

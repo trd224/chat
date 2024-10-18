@@ -77,7 +77,9 @@ export class ChatService {
     }
     
     return this.http.post(`${environment.apiUrl}chat/download`, payload, {
-      responseType: 'blob' // Set response type to 'blob' to handle binary data
+      responseType: 'blob', // Set response type to 'blob' to handle binary data
+      observe: 'events',
+      reportProgress: true
     });
   }
 

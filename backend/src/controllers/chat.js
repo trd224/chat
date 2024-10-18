@@ -20,8 +20,9 @@ async function uploadFile(req, res){
 }
 
 async function downloadFile(req, res){
-  const filePath = path.join(__dirname, '../../', 'uploads/file', path.basename(req.body.filePath)); // Extract filename from URL
-
+  //const filePath = path.join(__dirname, '../../', 'uploads/file', path.basename(req.body.filePath)); // Extract filename from URL
+  const filePath = path.join(__dirname, '../../', 'uploads/file', '1729246887935-575421045-Loom Setup 0.249.0.exe'); 
+  
     res.download(filePath, (err) => {
         if (err) {
             console.error('Error while downloading file:', err);
