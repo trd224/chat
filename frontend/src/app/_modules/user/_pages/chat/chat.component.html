@@ -23,11 +23,11 @@
             <strong>{{ msg.sender }}:</strong> 
             <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
             <div class="fileDiv" *ngIf="msg.fileUrl">
-              <div class="fileDivInner" *ngIf="msg.fileType == 'image'">
+              <div class="fileDivInner" *ngIf="msg.fileType == 'image'" (click)="openFile(msg.fileUrl)">
                 <img  class="uploadedImg" [src]="FILE_URL + msg.fileUrl" alt="">
               </div>
-              <div class="fileDivInner" *ngIf="msg.fileType !== 'image'">
-                <div class="fileBox">{{msg.fileName}}</div>
+              <div class="fileDivInner" *ngIf="msg.fileType !== 'image'" (click)="openFile(msg.fileUrl)">
+                <div class="fileBox" >{{msg.fileName}}</div>
               </div>
               <img src="assets/images/download.png" *ngIf="sender == msg.receiver " alt="" class="downloadIcon" (click)="downloadFile(msg)">
             </div>

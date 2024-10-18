@@ -89,4 +89,14 @@ export class ChatService {
       });
     });
   }
+
+
+
+openFile(fileUrl: string): Observable<any>{
+  const payload = {
+    filePath: fileUrl
+  }
+  return this.http.post(`${environment.apiUrl}chat/openFile`, payload);
+}
+
 }

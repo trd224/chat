@@ -154,4 +154,15 @@ export class ChatComponent implements OnInit {
       }
     );
   }
+
+
+  openFile(fileUrl: string){
+    console.log(fileUrl);
+    this.chatService.openFile(fileUrl).subscribe(res => {
+      console.log('File opened successfully');
+    },error => {
+      console.error('Error opening file:', error);
+    })
+  }
+
 }

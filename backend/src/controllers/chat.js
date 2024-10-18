@@ -1,5 +1,6 @@
 const Chat = require("../models/chat");
 const path = require('path');
+const { exec, spawn  } = require('child_process');
 
 async function chatHistory(req, res){
     const { sender, receiver } = req.params;
@@ -32,6 +33,21 @@ async function downloadFile(req, res){
 
 }
 
+async function openFile(req, res){
+  const fPath = req.body.filePath;
+  const filePath = path.join(__dirname, '../../', 'uploads/file', fPath);  // Path to your file
+
+  // Command to open the file
+  exec(`start "" "${filePath}"`, (error) => {
+    if (error) {
+      console.error(`Error opening file: ${error.message}`);
+      return res.status(500).send('Failed to open file');
+    }
+    
+    res.send('File opened successfully');
+  });
+}
 
 
-module.exports = { chatHistory, uploadFile, downloadFile }
+
+module.exports = { chatHistory, uploadFile, downloadFile, openFile }
