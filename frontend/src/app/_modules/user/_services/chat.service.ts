@@ -31,13 +31,10 @@ export class ChatService {
 
   // Register the current user's email with the backend
   registerUser(userId: string) {
-    console.log(userId)
     this.socket.emit('register', userId);
   }
 
   getHistory(sender: string, receiver: string): Observable<any> {
-    console.log(sender);
-    console.log(receiver);
     return this.http.get(`${environment.apiUrl}chat/history/${sender}/${receiver}`);
   }
 

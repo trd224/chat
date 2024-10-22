@@ -49,7 +49,6 @@ export class SignupComponent implements OnInit {
     let formData = this.signupForm.value;
 
     delete formData.confirmPassword;
-    console.log(formData)
 
     this.authService.signup(API_ENDPOINTS.user.signup, formData).subscribe(res => {
       if(res.message == "User created"){

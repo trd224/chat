@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const { SECRET } = require('../configs/envConfig');
 
 function setUser(user){
-    console.log(user)
     try{
         const payload = {
             _id: user._id,

@@ -29,7 +29,6 @@ export class SideNavComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.get(API_ENDPOINTS.user.all).subscribe((res) => {
       this.users = res;
-      console.log(this.users);
     });
   }
 

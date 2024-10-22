@@ -46,7 +46,6 @@ export class ChatComponent implements OnInit {
     this.authService.currentUser.subscribe((user:any) => {
       this.currentUser = user;
       this.chatService.getCurrentUser().subscribe((res:any) => {
-        console.log(res);
         this.sender = res._id;
 
          // Register the current user after socket connection
@@ -97,7 +96,6 @@ export class ChatComponent implements OnInit {
 
   // Fetch chat history
   fetchHistory(receiver: any): void {
-    alert("sdsd")
     this.loading = true; // Set loading to true when fetching history
     this.receiver = receiver.userName;
     this.chatService.getHistory(this.sender, this.receiver).subscribe(
@@ -155,11 +153,10 @@ export class ChatComponent implements OnInit {
       .downloadFile(data.fileUrl)
       .subscribe({
         next: (event) => {
-          console.log(event);
           if (event.type === HttpEventType.DownloadProgress) {
 
             this.downloadProgressMap[fileUrl] = Math.round((event.loaded / (event.total)) * 100);
-            console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
+            //console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
 
           } else if (event instanceof HttpResponse) {
 
@@ -192,7 +189,7 @@ export class ChatComponent implements OnInit {
       downloadSubscription.unsubscribe(); // Cancel the download
       delete this.downloadProgressMap[fileUrl]; // Remove progress tracking
       delete this.downloadSubscriptions[fileUrl]; // Clean up subscription reference
-      console.log(`Download for ${fileUrl} cancelled.`);
+      //console.log(`Download for ${fileUrl} cancelled.`);
     }
   }
 
@@ -200,7 +197,6 @@ export class ChatComponent implements OnInit {
     this.fileOpenLoading[fileUrl] = true;
     this.chatService.openFile(fileUrl).subscribe(
       (res) => {
-        console.log('File opened successfully');
         delete this.fileOpenLoading[fileUrl];
       },
       (error) => {
