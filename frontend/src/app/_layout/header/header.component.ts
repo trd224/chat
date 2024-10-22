@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/_services/user.service';
 import { AuthService } from 'src/app/_shared/_services/auth.service';
 
 
@@ -11,8 +12,9 @@ import { AuthService } from 'src/app/_shared/_services/auth.service';
 export class HeaderComponent implements OnInit {
 
   currentUser: any;
+  userName!: string;
 
-  constructor(private authService: AuthService, private router: Router){
+  constructor(private authService: AuthService, private userService: UserService, private router: Router){
     this.authService.currentUser.subscribe((user:any) => {
       this.currentUser = user;
     })

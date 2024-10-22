@@ -1,4 +1,5 @@
 const Chat = require("../models/chat");
+const Group = require("../models/group");
 const path = require("path");
 const { exec, spawn } = require("child_process");
 
@@ -46,4 +47,50 @@ async function openFile(req, res) {
   });
 }
 
-module.exports = { chatHistory, uploadFile, downloadFile, openFile };
+async function createGroup(req, res) {
+  try {
+    const { groupName, groupMembers = [] } = req.body;
+    const currentUserId = req.currentUserId; 
+
+    // Check if the user already has a group with the same name
+    const existingGroup = await Group.findOne({ groupName, createdBy: currentUserId });
+
+    if (existingGroup) {
+      return res.status(409).json({ message: "Group with the same name already exists for this user." });
+    }
+
+    // Add the current user as a default member of the group
+    if (!groupMembers.includes(currentUserId)) {
+      groupMembers.push(currentUserId); // Ensure current user is added to groupMembers
+    }
+
+    // Create a new group
+    const newGroup = new Group({
+      groupName,
+      groupMembers,
+      createdBy: currentUserId
+    });
+
+    await newGroup.save();
+    return res.status(201).json({ message: "Group created successfully!" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+async function getAllGroup(req, res) {
+  try {
+    const groups = await Group.find({});
+    if(groups){
+      return  res.status(200).send(groups);
+    }
+  }
+  catch(err){
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+
+
+
+module.exports = { chatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup };

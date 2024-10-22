@@ -7,6 +7,12 @@ export const API_ENDPOINTS = {
         current: `user/current`,
         byId: (id: string | number) => `user/${id}`
     },
+    chat: {
+        group: {
+            all: `chat/group/all`
+        },
+    },
+    
     product: {
         list: `product/list`,
         detail: `product/detail`

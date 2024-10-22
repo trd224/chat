@@ -108,4 +108,10 @@ openFile(fileUrl: string): Observable<any>{
   return this.http.post(`${environment.apiUrl}chat/openFile`, payload);
 }
 
+
+createGroup(groupName: string){
+  const payload = {groupName}
+  return this.http.post(`${environment.apiUrl}chat/createGroup`, payload);
+}
+
 }

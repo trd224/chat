@@ -7,6 +7,7 @@ import { DetailComponent } from './_pages/detail/detail.component';
 import { ChatComponent } from './_pages/chat/chat.component';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { SideNavComponent } from './_components/side-nav/side-nav.component';
+import { DialogComponent } from './_components/dialog/dialog.component';
 
 
 
@@ -16,7 +17,8 @@ import { SideNavComponent } from './_components/side-nav/side-nav.component';
     UserComponent,
       DetailComponent,
       ChatComponent,
-      SideNavComponent
+      SideNavComponent,
+      DialogComponent
   ],
   imports: [
     CommonModule,

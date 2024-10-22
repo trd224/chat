@@ -23,6 +23,7 @@ import { SignupComponent } from './_pages/signup/signup.component';
 import { DateFormatPipe } from './_pipes/date-format.pipe';
 
 import { LoginComponent } from './_pages/login/login.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -47,6 +48,7 @@ import { LoginComponent } from './_pages/login/login.component';
     AppRoutingModule,
     HttpClientModule,
     SharedModule,
+    BrowserAnimationsModule,
     
   ],
   providers: [

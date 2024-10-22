@@ -53,10 +53,11 @@ export class ChatComponent implements OnInit {
 
         this.route.queryParams.subscribe((params) => {
           this.receiver = params['receiver'];
-          this.chatService.getUserById(this.receiver).subscribe(res => {
-            this.receiverObj = res;
-          })
           if (this.receiver) {
+            this.chatService.getUserById(this.receiver).subscribe(res => {
+              this.receiverObj = res;
+            })
+       
             this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
               this.messages = history;
             });
