@@ -1,0 +1,21 @@
+<div class="sideNav">
+    <ul>
+      <ng-container *ngFor="let user of users">
+        <li *ngIf="user?.userName != currentUser?.userName" [ngClass]="{ active: user?.userName == receiver }" (click)="goToChat(user)">
+          <a>{{ user.userName }}</a>
+        </li>
+      </ng-container>
+    </ul>
+
+    <h2>Groups</h2>
+
+    <ul>
+      <ng-container *ngFor="let groupName of groups">
+        <li (click)="goToGroupChat(groupName)">
+          <a>{{ groupName }}</a>
+        </li>
+      </ng-container>
+    </ul>
+
+    <!-- <button (click)="joinGroup()">Join Group</button> -->
+  </div>

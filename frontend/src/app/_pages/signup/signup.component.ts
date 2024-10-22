@@ -21,8 +21,8 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
+      userName: ['', [Validators.required]],
       mobile: ['', [Validators.required, mobileNumberValidator]],
-      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15)]],
       confirmPassword: ['', [Validators.required, passwordValidator]]
     })
@@ -49,6 +49,7 @@ export class SignupComponent implements OnInit {
     let formData = this.signupForm.value;
 
     delete formData.confirmPassword;
+    console.log(formData)
 
     this.authService.signup(API_ENDPOINTS.user.signup, formData).subscribe(res => {
       if(res.message == "User created"){

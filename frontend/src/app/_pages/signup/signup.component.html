@@ -6,19 +6,19 @@
             <div class="error-msg" *ngIf="f['name'].touched && f['name'].invalid">Name is required</div>
         </div>
         <div class="formField">
+            <label>User Name</label>
+            <input type="text" formControlName="userName">
+            <div class="error-msg" *ngIf="f['userName'].touched && f['userName'].invalid">UserName is required</div>
+        </div>
+        <div class="formField">
             <label>Mobile</label>
             <input type="text" formControlName="mobile">
-            <!-- <div class="error-msg" *ngIf="f['mobile'].touched && f['mobile'].invalid">Mobile number is required</div> -->
              <div class="error-msg" *ngIf="submitted && f['mobile'].errors">
                 <div *ngIf="f['mobile'].errors['required']">Mobile Number is required</div>
                 <div *ngIf="!f['mobile'].errors['required'] && f['mobile'].errors['isError']">Mobile number is not corrent</div>
              </div>
         </div>
-        <div class="formField">
-            <label>email</label>
-            <input type="email" formControlName="email">
-            <div class="error-msg" *ngIf="f['email'].touched && f['email'].invalid">Email is required</div>
-        </div>
+        
         <div class="formField">
             <label>password</label>
             <input type="password" formControlName="password">

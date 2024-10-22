@@ -13,7 +13,7 @@ export class HeaderComponent implements OnInit {
   currentUser: any;
 
   constructor(private authService: AuthService, private router: Router){
-    this.authService.currentUser.subscribe(user => {
+    this.authService.currentUser.subscribe((user:any) => {
       this.currentUser = user;
     })
   }

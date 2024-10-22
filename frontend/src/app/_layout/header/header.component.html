@@ -4,7 +4,7 @@
         <li><a routerLink="/login">login</a></li>
     </ul>
     <ul *ngIf="currentUser">
-        <li class="align">{{currentUser.email}}</li>
+        <li class="align">{{currentUser.userName}}</li>
         <li><a (click)="logout()">Logout</a></li>
     </ul>
 </header>

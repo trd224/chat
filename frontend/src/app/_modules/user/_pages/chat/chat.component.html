@@ -1,50 +1,20 @@
 <div>
-  <div class="sideNav">
-    <ul>
-      <ng-container *ngFor="let user of users">
-        <li
-          *ngIf="user?.email != currentUser?.email"
-          [ngClass]="{ active: user?.email == receiver }"
-          (click)="goToChat(user)"
-        >
-          <a>{{ user.name }}</a>
-        </li>
-      </ng-container>
-    </ul>
-  </div>
+  <app-side-nav></app-side-nav>
   <div class="chatSection" *ngIf="receiver">
-    <h2>Chat with {{ receiver }}</h2>
-
-    <!-- <div>
-        <input [(ngModel)]="receiver" placeholder="Receiver's Username" />
-        <button (click)="fetchHistory()">Load History</button>
-      </div> -->
-
+    <h2>Chat with {{ receiverObj.name }}</h2>
     <ul>
       <ng-container *ngFor="let msg of messages">
-        <li [ngClass]="{ receiver: currentUser?.email !== msg.sender }">
-          <strong>{{ msg.sender }}:</strong>
+        <li [ngClass]="{ 'receiver': sender !== msg.senderObj._id }">
+          <strong>{{ msg.senderObj.name }}:</strong>
           <span *ngIf="!msg.fileUrl">{{ msg.message }}</span>
           <div class="fileDiv" *ngIf="msg.fileUrl">
-            <div
-              class="fileDivInner"
-              *ngIf="msg.fileType == 'image'"
-              (click)="openFile(msg.fileUrl)"
-            >
+            <div class="fileDivInner" *ngIf="msg.fileType == 'image'" (click)="openFile(msg.fileUrl)">
               <img class="uploadedImg" [src]="FILE_URL + msg.fileUrl" alt="" />
-              <span *ngIf="fileOpenLoading[msg.fileUrl]" class="fileOpenLoading"
-                >Loading...</span
-              >
+              <span *ngIf="fileOpenLoading[msg.fileUrl]" class="fileOpenLoading">Loading...</span>
             </div>
-            <div
-              class="fileDivInner"
-              *ngIf="msg.fileType !== 'image'"
-              (click)="openFile(msg.fileUrl)"
-            >
+            <div class="fileDivInner" *ngIf="msg.fileType !== 'image'" (click)="openFile(msg.fileUrl)">
               <div class="fileBox">{{ msg.fileName }}</div>
-              <span *ngIf="fileOpenLoading[msg.fileUrl]" class="fileOpenLoading"
-                >Loading...</span
-              >
+              <span *ngIf="fileOpenLoading[msg.fileUrl]" class="fileOpenLoading">Loading...</span>
             </div>
             <div class="dwn">
               <div *ngIf="downloadProgressMap[msg.fileUrl] > 0" class="pbarWpr">
@@ -63,12 +33,8 @@
 
               <img
                 src="assets/images/download.png"
-                *ngIf="
-                  sender == msg.receiver &&
-                  (!downloadProgressMap[msg.fileUrl] ||
-                    downloadProgressMap[msg.fileUrl] === 0)
-                "
-                alt=""
+                *ngIf="sender == msg.receiverObj._id && (!downloadProgressMap[msg.fileUrl] || downloadProgressMap[msg.fileUrl] === 0)"
+                alt="download"
                 class="downloadIcon"
                 (click)="downloadFile(msg)"
               />
@@ -83,11 +49,7 @@
       <p>{{ typingIndicator }}</p>
     </div>
 
-    <input
-      [(ngModel)]="message"
-      placeholder="Type a message..."
-      (input)="onTyping()"
-    />
+    <input [(ngModel)]="message" placeholder="Type a message..." (input)="onTyping()"/>
     <button (click)="sendMessage()">Send</button>
 
     <!-- File Upload -->

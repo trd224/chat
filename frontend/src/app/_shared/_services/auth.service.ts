@@ -9,13 +9,19 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  user: any = localStorage.getItem("user");
- 
-  private currentUserSubject = new BehaviorSubject<any>(JSON.parse(this.user));
-  currentUser = this.currentUserSubject.asObservable();
+  user: any;
+  private currentUserSubject: BehaviorSubject<any>;
+  currentUser: any;
 
   constructor(private http: HttpClient) { 
-   
+    if (typeof window !== 'undefined' && localStorage) {
+      this.user = localStorage?.getItem('user');
+      this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(this.user));
+    } else {
+      this.currentUserSubject = new BehaviorSubject<any>(null);
+    }
+    this.currentUser = this.currentUserSubject.asObservable();
+  
   }
 
   public get currentUserValue(): any {

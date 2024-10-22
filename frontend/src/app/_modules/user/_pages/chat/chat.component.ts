@@ -13,12 +13,13 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit {
-  users!: any[];
+
+
   sender: string = '';
   receiver: string = '';
+  receiverObj: any = {};
   message: string = '';
   messages: Array<any> = [];
-  // uploadedFiles: Array<any> = [];
   currentUser: any;
   typingIndicator: string = ''; // Indicator for typing status
   loading: boolean = false; // Add loading state
@@ -37,23 +38,41 @@ export class ChatComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.authService.currentUser.subscribe((user) => {
-      this.currentUser = user;
-      this.sender = this.currentUser?.email;
-    });
+    
   }
 
   ngOnInit(): void {
-    this.apiService.get(API_ENDPOINTS.user.all).subscribe((res) => {
-      this.users = res;
-    });
 
-    // Register the current user after socket connection
-    this.chatService.registerUser(this.sender);
+    this.authService.currentUser.subscribe((user:any) => {
+      this.currentUser = user;
+      this.chatService.getCurrentUser().subscribe((res:any) => {
+        console.log(res);
+        this.sender = res._id;
+
+         // Register the current user after socket connection
+         this.chatService.registerUser(this.sender);
+
+        this.route.queryParams.subscribe((params) => {
+          this.receiver = params['receiver'];
+          this.chatService.getUserById(this.receiver).subscribe(res => {
+            this.receiverObj = res;
+          })
+          if (this.receiver) {
+            this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
+              this.messages = history;
+            });
+          }
+        });
+      })
+      
+    });
+   
+
+   
 
     // Listen for new messages
     this.chatService.receiveMessages().subscribe((msg: any) => {
-      if (this.sender == msg.sender || msg.sender == this.receiver) {
+      if (this.sender == msg.senderObj._id || this.receiver == msg.senderObj._id) {
         this.messages.push(msg); // Automatically update the view
       }
     });
@@ -65,30 +84,22 @@ export class ChatComponent implements OnInit {
 
     // Listen for typing events
     this.chatService.receiveTyping().subscribe((data: any) => {
-      if (data.sender === this.receiver) {
-        this.typingIndicator = `${data.sender} is typing...`;
+      if (data.senderObj._id === this.receiver) {
+        this.typingIndicator = `${data.senderObj.name} is typing...`;
       }
       setTimeout(() => {
         this.typingIndicator = ''; // Clear typing indicator after a short delay
       }, 3000); // Adjust the timeout as needed
     });
 
-    this.route.queryParams.subscribe((params) => {
-      this.receiver = params['receiver'];
-      if (this.receiver) {
-        this.chatService
-          .getHistory(this.sender, this.receiver)
-          .subscribe((history: any) => {
-            this.messages = history;
-          });
-      }
-    });
+   
   }
 
   // Fetch chat history
   fetchHistory(receiver: any): void {
+    alert("sdsd")
     this.loading = true; // Set loading to true when fetching history
-    this.receiver = receiver.email;
+    this.receiver = receiver.userName;
     this.chatService.getHistory(this.sender, this.receiver).subscribe(
       (history: any) => {
         this.messages = history;
@@ -100,11 +111,7 @@ export class ChatComponent implements OnInit {
     );
   }
 
-  goToChat(receiver: any) {
-    this.router.navigate(['/users/chat'], {
-      queryParams: { receiver: receiver.email },
-    });
-  }
+
 
   // Send a message
   sendMessage(): void {
@@ -122,21 +129,12 @@ export class ChatComponent implements OnInit {
   // Upload and send file
   sendFile(): void {
     if (this.fileToUpload) {
-      this.chatService
-        .uploadFile(this.fileToUpload)
-        .subscribe((response: any) => {
+      this.chatService.uploadFile(this.fileToUpload).subscribe((response: any) => {
           const fileName = response.fileName;
           const fileUrl = response.fileUrl;
           const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
-
           // Send the file via socket
-          this.chatService.sendFile(
-            this.sender,
-            this.receiver,
-            fileName,
-            fileUrl,
-            fileType
-          );
+          this.chatService.sendFile(this.sender, this.receiver, fileName, fileUrl, fileType);
 
           // Reset file input
           this.fileToUpload = null;
@@ -155,23 +153,16 @@ export class ChatComponent implements OnInit {
     this.downloadProgressMap[fileUrl] = 0; // Initialize progress for this file
     const downloadSubscription = this.chatService
       .downloadFile(data.fileUrl)
-      .subscribe(
-        (event) => {
+      .subscribe({
+        next: (event) => {
           console.log(event);
           if (event.type === HttpEventType.DownloadProgress) {
 
-            // if (event.total) {
-            //   // If the total size is available, calculate progress
-            //   this.downloadProgressMap[fileUrl] = Math.round((event.loaded / event.total) * 100);
-            // } else {
-            //   // If total size is not available, set progress manually or log for debugging
-            //   console.warn('Total size is unavailable, cannot track download progress accurately.');
-            // }
-
             this.downloadProgressMap[fileUrl] = Math.round((event.loaded / (event.total)) * 100);
             console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
-            // You can update a progress bar or display the progress here
+
           } else if (event instanceof HttpResponse) {
+
             const blob: Blob = event.body as Blob;
             const url = window.URL.createObjectURL(blob);
             const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
@@ -181,13 +172,14 @@ export class ChatComponent implements OnInit {
             a.click();
             window.URL.revokeObjectURL(url); // Cleanup the URL object after download
             delete this.downloadProgressMap[fileUrl];
+
           }
         },
-        (error) => {
+       error: (error) => {
           console.error('Download error:', error);
           delete this.downloadProgressMap[fileUrl];
         }
-      );
+  });
 
     // Store the subscription for future cancellation
     this.downloadSubscriptions[fileUrl] = downloadSubscription;

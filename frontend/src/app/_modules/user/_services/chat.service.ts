@@ -17,17 +17,27 @@ export class ChatService {
     
   }
 
+  getCurrentUser(){
+    return this.http.get(`${environment.apiUrl}user/current`);
+  }
+  getUserById(id: any){
+    return this.http.get(`${environment.apiUrl}user/${id}`);
+  }
+
    // Emit the "typing" event to the server
    typing(sender: string, receiver: string) {
     this.socket.emit('typing', { sender, receiver });
   }
 
   // Register the current user's email with the backend
-  registerUser(email: string) {
-    this.socket.emit('register', email);
+  registerUser(userId: string) {
+    console.log(userId)
+    this.socket.emit('register', userId);
   }
 
   getHistory(sender: string, receiver: string): Observable<any> {
+    console.log(sender);
+    console.log(receiver);
     return this.http.get(`${environment.apiUrl}chat/history/${sender}/${receiver}`);
   }
 
