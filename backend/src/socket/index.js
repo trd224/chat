@@ -71,6 +71,11 @@ const initSocket = async (server) => {
       });
 
 
+      socket.on('group message', async (data) => {
+        const { sender, groupId, message } = data;
+      })
+
+
 
       // Handle photo/file sending
       socket.on('file upload', async (data) => {

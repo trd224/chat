@@ -49,7 +49,8 @@ async function openFile(req, res) {
 
 async function createGroup(req, res) {
   try {
-    const { groupName, groupMembers = [] } = req.body;
+    const { groupName, groupMembers } = req.body;
+    console.log(groupMembers);
     const currentUserId = req.currentUserId; 
 
     // Check if the user already has a group with the same name
@@ -81,16 +82,37 @@ async function createGroup(req, res) {
 async function getAllGroup(req, res) {
   try {
     const groups = await Group.find({});
-    if(groups){
-      return  res.status(200).send(groups);
+    if(!groups){
+      return  res.status(400).json({message: 'groups not found'});
     }
+    return  res.status(200).send(groups);
   }
   catch(err){
     return res.status(500).json({ error: err.message });
   }
 }
 
+async function getGroupByCurrentUserId(req, res) {
+  try {
+    const currentUserId = req.currentUserId; 
+    const groups = await Group.find({
+      groupMembers: {
+        $in: [currentUserId]
+      }
+    });
+    if(!groups){
+      return  res.status(400).json({message: 'groups not found'});
+    }
+    return  res.status(200).send(groups);
+  }
+  catch(err){
+    return res.status(500).json({ error: err.message });
+  }
+  
+}
 
 
 
-module.exports = { chatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup };
+
+
+module.exports = { chatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupByCurrentUserId };

@@ -18,7 +18,7 @@ export class SideNavComponent implements OnInit {
   currentUser: any;
   sender: string = '';
   receiver: string = '';
-
+  groupId: string = '';
   groups!: any[];
   //groupName: string = ''; // Selected group name
 
@@ -37,23 +37,29 @@ export class SideNavComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getUsers();
+    this.getGroups();
     this.route.queryParams.subscribe((params) => {
-      this.receiver = params['receiver'];
-      if (this.receiver) {
-        this.getUsers();
-        this.getGroups();
-      }})
+      console.log(params);
+      if(params['receiver']){
+        this.receiver = params['receiver'];
+        this.groupId = "";
+      }
+      else if(params['group']){
+        this.groupId = params['group'];
+        this.receiver = ""
+      }
+    })
     
   }
 
   getUsers(){
     this.apiService.get(API_ENDPOINTS.user.all).subscribe((res) => {
       this.users = res;
-      console.log(this.users)
     });
   }
   getGroups(){
-    this.apiService.get(API_ENDPOINTS.chat.group.all).subscribe((res) => {
+    this.apiService.get(API_ENDPOINTS.chat.group.byCurrentUserId).subscribe((res) => {
       this.groups = res;
     });
   }
@@ -64,22 +70,28 @@ export class SideNavComponent implements OnInit {
     });
   }
 
-  goToGroupChat(groupName: any){
+  goToGroupChat(group: any){
     this.router.navigate(['/users/chat'], {
-      queryParams: { group: groupName },
+      queryParams: { group: group._id },
     });
   }
 
   createGroup(): void {
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '250px',
-      data: { message: 'Hello from the dialog!' } // Optional data
+      width: '900px',
+      data: { 
+        users:  this.users,
+        currentUser: this.sender
+       } // Optional data
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.chatService.createGroup(result).subscribe((res:any) => {
-        this.getGroups();
-      })
+      if(result){
+        this.chatService.createGroup(result).subscribe((res:any) => {
+          this.getGroups();
+        })
+      }
+      
     });
   }
 }

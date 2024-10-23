@@ -11,7 +11,7 @@
 
     <ul>
       <ng-container *ngFor="let group of groups">
-        <li (click)="goToGroupChat(group)">
+        <li (click)="goToGroupChat(group)" [ngClass]="{ 'active': group?._id == groupId  }" (click)="goToGroupChat(group)">
           <a>{{ group.groupName }}</a>
         </li>
       </ng-container>

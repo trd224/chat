@@ -18,6 +18,7 @@ export class ChatComponent implements OnInit {
   sender: string = '';
   receiver: string = '';
   receiverObj: any = {};
+  groupId: string = "";
   message: string = '';
   messages: Array<any> = [];
   currentUser: any;
@@ -52,7 +53,15 @@ export class ChatComponent implements OnInit {
          this.chatService.registerUser(this.sender);
 
         this.route.queryParams.subscribe((params) => {
-          this.receiver = params['receiver'];
+          if(params['receiver']){
+            this.receiver = params['receiver'];
+            this.groupId = "";
+          }
+          else if(params['group']){
+            this.groupId = params['group'];
+            this.receiver = ""
+          }
+
           if (this.receiver) {
             this.chatService.getUserById(this.receiver).subscribe(res => {
               this.receiverObj = res;
@@ -61,6 +70,13 @@ export class ChatComponent implements OnInit {
             this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
               this.messages = history;
             });
+          }
+
+          if(this.groupId){
+            // this.chatService.getGroupHistory(this.sender, this.groupId).subscribe((history: any) => {
+            //   this.messages = history;
+            // });
+            this.messages = [];
           }
         });
       })
@@ -114,8 +130,15 @@ export class ChatComponent implements OnInit {
 
   // Send a message
   sendMessage(): void {
+    
     if (this.message.trim()) {
-      this.chatService.sendMessage(this.sender, this.receiver, this.message);
+      if(!this.groupId){
+        this.chatService.sendMessage(this.sender, this.receiver, this.message);
+      }
+      else{
+        this.chatService.sendGroupMessage(this.sender, this.groupId, this.message);
+      }
+      
       this.message = ''; // Clear input after sending
     }
   }

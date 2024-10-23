@@ -38,9 +38,18 @@ export class ChatService {
     return this.http.get(`${environment.apiUrl}chat/history/${sender}/${receiver}`);
   }
 
+  getGroupHistory(sender: string, receiver: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}chat/groupHistory/${sender}/${receiver}`);
+  }
+
   // Emit a private message to the server
   sendMessage(sender: string, receiver: string, message: string) {
     this.socket.emit('private message', { sender, receiver, message });
+  }
+
+    // Emit a group message to the server
+  sendGroupMessage(sender: string, groupId: string, message: string) {
+    this.socket.emit('group message', { sender, groupId, message });
   }
   
 
@@ -109,8 +118,8 @@ openFile(fileUrl: string): Observable<any>{
 }
 
 
-createGroup(groupName: string){
-  const payload = {groupName}
+createGroup(payload: any){
+  console.log(payload)
   return this.http.post(`${environment.apiUrl}chat/createGroup`, payload);
 }
 

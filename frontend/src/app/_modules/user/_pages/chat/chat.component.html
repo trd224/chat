@@ -1,6 +1,6 @@
 <div>
   <app-side-nav></app-side-nav>
-  <div class="chatSection" *ngIf="receiver">
+  <div class="chatSection" *ngIf="receiver || groupId">
     <h2>Chat with {{ receiverObj.name }}</h2>
     <ul>
       <ng-container *ngFor="let msg of messages">

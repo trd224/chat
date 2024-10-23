@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { chatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup } = require("../controllers/chat");
+const { chatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupByCurrentUserId } = require("../controllers/chat");
 const { authenticate } = require("../middlewares/auth");
 const  upload  = require("../middlewares/multer");
 
@@ -11,6 +11,8 @@ router.post('/download', authenticate, downloadFile);
 router.post('/openFile', authenticate, openFile);
 router.post('/createGroup', authenticate, createGroup);
 router.get('/group/all', authenticate, getAllGroup);
+router.get('/group/byCurrentUserId', authenticate, getGroupByCurrentUserId);
+
 
 
 
