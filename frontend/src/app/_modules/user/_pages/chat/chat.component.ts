@@ -3,9 +3,10 @@ import { ChatService } from '../../_services/chat.service';
 import { AuthService } from 'src/app/_shared/_services/auth.service';
 import { ApiService } from 'src/app/_shared/_services/api.service';
 import { API_ENDPOINTS } from 'src/app/_shared/_config/const';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat',
@@ -56,28 +57,48 @@ export class ChatComponent implements OnInit {
           if(params['receiver']){
             this.receiver = params['receiver'];
             this.groupId = "";
+
+            if (this.receiver) {
+              this.chatService.getUserById(this.receiver).subscribe(res => {
+                this.receiverObj = res;
+              })
+         
+              this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
+                this.messages = history;
+              });
+            }
+
           }
           else if(params['group']){
             this.groupId = params['group'];
             this.receiver = ""
-          }
 
-          if (this.receiver) {
-            this.chatService.getUserById(this.receiver).subscribe(res => {
-              this.receiverObj = res;
-            })
-       
-            this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
-              this.messages = history;
+            if(this.groupId){
+              console.log(this.groupId)
+              // this.chatService.getGroupHistory(this.sender, this.groupId).subscribe((history: any) => {
+              //   this.messages = history;
+              // });
+              this.chatService.joinRoom(this.groupId);
+              //this.messages = [];
+            }
+
+
+            this.router.events
+            .pipe(
+              filter((event): event is NavigationStart => event instanceof NavigationStart),
+              take(1) // Automatically unsubscribe after the first emission
+            ) 
+            .subscribe((event: NavigationStart) => {
+              const queryParamsBeforeChange = this.route.snapshot.queryParams;
+              this.chatService.leaveRoom(queryParamsBeforeChange["group"]);
             });
+
+
           }
 
-          if(this.groupId){
-            // this.chatService.getGroupHistory(this.sender, this.groupId).subscribe((history: any) => {
-            //   this.messages = history;
-            // });
-            this.messages = [];
-          }
+          
+
+          
         });
       })
       
@@ -106,6 +127,13 @@ export class ChatComponent implements OnInit {
       setTimeout(() => {
         this.typingIndicator = ''; // Clear typing indicator after a short delay
       }, 3000); // Adjust the timeout as needed
+    });
+
+    this.chatService.receiveGroupMessages().subscribe((msg: any) => {
+      console.log(msg);
+      // if (this.sender == msg.senderObj._id || this.receiver == msg.senderObj._id) {
+      //   this.messages.push(msg); // Automatically update the view
+      // }
     });
 
    

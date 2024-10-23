@@ -47,6 +47,13 @@ export class ChatService {
     this.socket.emit('private message', { sender, receiver, message });
   }
 
+  joinRoom(groupId: string){
+    this.socket.emit('joinRoom', groupId);
+  }
+  leaveRoom(groupId: string){
+    this.socket.emit('leaveRoom', groupId);
+  }
+
     // Emit a group message to the server
   sendGroupMessage(sender: string, groupId: string, message: string) {
     this.socket.emit('group message', { sender, groupId, message });
@@ -57,6 +64,14 @@ export class ChatService {
   receiveMessages(): Observable<any> {
     return new Observable((observer) => {
       this.socket.on('private message', (msg) => { // Listen for the correct event
+        observer.next(msg);
+      });
+    });
+  }
+
+  receiveGroupMessages(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('group message', (msg) => { // Listen for the correct event
         observer.next(msg);
       });
     });

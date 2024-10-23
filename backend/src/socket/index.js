@@ -1,5 +1,6 @@
 const Chat = require("../models/chat");
 const User = require("../models/user");
+const Group = require("../models/group");
 const socketIo = require('socket.io');
 const { ORIGIN } = require('../configs/envConfig');
 
@@ -71,8 +72,57 @@ const initSocket = async (server) => {
       });
 
 
+       // Listen for a user joining a group
+        socket.on('joinRoom', async (groupId) => {
+          const group = await Group.findById(groupId);
+          if (!group) {
+            console.error('Group not found');
+            return;
+          }
+
+          socket.join(groupId); // Add the user to the group room
+          console.log(`User ${socket.id} joined group: ${group.groupName}`);
+        });
+
+       // Listen for the 'leave-group' event
+        socket.on('leaveRoom', async (groupId) => {
+          const group = await Group.findById(groupId);
+          if (!group) {
+            console.error('Group not found');
+            return;
+          }
+
+          socket.leave(groupId); // Remove the user from the group room
+          console.log(`User ${socket.id} left group: ${group.groupName}`);
+        });
+
+
       socket.on('group message', async (data) => {
         const { sender, groupId, message } = data;
+
+        const senderObj = await User.findById(sender).select('_id name userName mobile').lean();
+        const groupObj = await Group.findById(groupId);
+
+        if (!senderObj || !groupObj) {
+          console.error('User or Group not found');
+          return;
+        }
+
+        // // Create chat object for group message
+        // const newChat = new Chat({
+        //   senderObj,
+        //   message,
+        //   groupId, // Store the groupId
+        //   isGroupMessage: true // Optional field to differentiate group and private messages
+        // });
+
+        // // Save group message to MongoDB
+        // await newChat.save();
+
+        // Broadcast message to all users in the group room, including the sender
+        io.to(groupId).emit('group message', { senderObj, groupObj, message });
+
+
       })
 
 
