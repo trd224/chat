@@ -10,6 +10,7 @@ import { SideNavComponent } from './_components/side-nav/side-nav.component';
 import { DialogComponent } from './_components/dialog/dialog.component';
 import { AlertBoxComponent } from './_components/alert-box/alert-box.component';
 import { ConfirmBoxComponent } from './_components/confirm-box/confirm-box.component';
+import { ProfileComponent } from './_pages/profile/profile.component';
 
 
 
@@ -22,7 +23,8 @@ import { ConfirmBoxComponent } from './_components/confirm-box/confirm-box.compo
       SideNavComponent,
       DialogComponent,
       AlertBoxComponent,
-      ConfirmBoxComponent
+      ConfirmBoxComponent,
+      ProfileComponent
   ],
   imports: [
     CommonModule,

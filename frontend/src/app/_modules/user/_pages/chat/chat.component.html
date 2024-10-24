@@ -2,7 +2,7 @@
   <app-side-nav [resetSideNav]="resetSideNav"></app-side-nav>
   <div class="chatSection" *ngIf="receiver || groupId">
     <div class="topBar">
-      <h2>Chat with {{ !groupId ? receiverObj.name : groupObj.groupName }}</h2>
+      <h2>Chat with <span class="profileLink" (click)="goToProfile()">{{ !groupId ? receiverObj.name : groupObj.groupName }}</span></h2>
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
         <mat-icon>more_vert</mat-icon>
       </button>

@@ -17,9 +17,4 @@ router.get('/group/:id', authenticate, getGroupById);
 router.get('/group/currentUser/byCurrentUserId', authenticate, getGroupByCurrentUserId);
 
 
-
-
-
-
-
 module.exports = router;

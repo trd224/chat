@@ -150,6 +150,16 @@ export class ChatComponent implements OnInit {
     });
   }
 
+  goToProfile(){
+    if(!this.groupId){
+      this.router.navigate([`/users/profile/${this.receiver}`])
+    }
+    else{
+      this.router.navigate([`/users/profile/${this.groupId}`])
+    }
+    
+  }
+
   // Fetch chat history
   fetchHistory(receiver: any): void {
     this.loading = true; // Set loading to true when fetching history
