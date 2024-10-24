@@ -33,7 +33,7 @@
 
               <img
                 src="assets/images/download.png"
-                *ngIf="sender == msg.receiverObj._id && (!downloadProgressMap[msg.fileUrl] || downloadProgressMap[msg.fileUrl] === 0)"
+                *ngIf="(sender == msg.receiverObj?._id || sender !== msg.senderObj?._id) && (!downloadProgressMap[msg.fileUrl] || downloadProgressMap[msg.fileUrl] === 0)"
                 alt="download"
                 class="downloadIcon"
                 (click)="downloadFile(msg)"

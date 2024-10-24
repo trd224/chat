@@ -38,8 +38,8 @@ export class ChatService {
     return this.http.get(`${environment.apiUrl}chat/history/${sender}/${receiver}`);
   }
 
-  getGroupHistory(sender: string, receiver: string): Observable<any> {
-    return this.http.get(`${environment.apiUrl}chat/groupHistory/${sender}/${receiver}`);
+  getGroupHistory(groupId: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}chat/groupHistory/${groupId}`);
   }
 
   // Emit a private message to the server
@@ -86,11 +86,24 @@ export class ChatService {
     });
   }
 
+   receiveUploadedFileFromGroup(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('file upload on group', (msg) => { // Listen for the correct event
+        observer.next(msg);
+      });
+    });
+  }
+
+  
+
   
 
    // Emit the "file upload" event to the server
    sendFile(sender: string, receiver: string, fileName: string, fileUrl: string, fileType: string) {
-    this.socket.emit('file upload', { sender, receiver, fileName, fileUrl, fileType });
+      this.socket.emit('file upload', { sender, receiver, fileName, fileUrl, fileType });
+  }
+  sendFileOnGroup(sender: string, groupId: string, fileName: string, fileUrl: string, fileType: string){
+    this.socket.emit('file upload on group', { sender, groupId, fileName, fileUrl, fileType });
   }
 
   // Upload file to server
@@ -134,7 +147,6 @@ openFile(fileUrl: string): Observable<any>{
 
 
 createGroup(payload: any){
-  console.log(payload)
   return this.http.post(`${environment.apiUrl}chat/createGroup`, payload);
 }
 

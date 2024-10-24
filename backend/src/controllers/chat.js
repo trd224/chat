@@ -1,5 +1,6 @@
 const Chat = require("../models/chat");
 const Group = require("../models/group");
+const GroupChat = require("../models/groupChat");
 const path = require("path");
 const { exec, spawn } = require("child_process");
 
@@ -13,6 +14,14 @@ async function chatHistory(req, res) {
   }).sort("timestamp");
   res.json(messages);
 }
+
+async function groupChatHistory(req, res) {
+  const { groupId } = req.params;
+  const messages = await GroupChat.find({ "groupObj._id": groupId },).sort("timestamp");
+  res.json(messages);
+}
+
+
 
 async function uploadFile(req, res) {
   const fileName = req.file.filename;
@@ -115,4 +124,4 @@ async function getGroupByCurrentUserId(req, res) {
 
 
 
-module.exports = { chatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupByCurrentUserId };
+module.exports = { chatHistory, groupChatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupByCurrentUserId };

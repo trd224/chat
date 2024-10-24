@@ -1,6 +1,7 @@
 const Chat = require("../models/chat");
 const User = require("../models/user");
 const Group = require("../models/group");
+const GroupChat = require("../models/groupChat");
 const socketIo = require('socket.io');
 const { ORIGIN } = require('../configs/envConfig');
 
@@ -56,7 +57,11 @@ const initSocket = async (server) => {
         }
 
         // Create the chat object with full user details
-        const newChat = new Chat({senderObj,receiverObj,message,});
+        const newChat = new Chat({
+          senderObj,
+          receiverObj,
+          message
+        });
 
         // Save the chat to MongoDB
         await newChat.save();
@@ -108,16 +113,16 @@ const initSocket = async (server) => {
           return;
         }
 
-        // // Create chat object for group message
-        // const newChat = new Chat({
-        //   senderObj,
-        //   message,
-        //   groupId, // Store the groupId
-        //   isGroupMessage: true // Optional field to differentiate group and private messages
-        // });
+        // Create chat object for group message
+        const newGroupChat = new GroupChat({
+          senderObj,
+          groupObj,
+          message,
+          //isGroupMessage: true // Optional field to differentiate group and private messages
+        });
 
         // // Save group message to MongoDB
-        // await newChat.save();
+        await newGroupChat.save();
 
         // Broadcast message to all users in the group room, including the sender
         io.to(groupId).emit('group message', { senderObj, groupObj, message });
@@ -136,7 +141,14 @@ const initSocket = async (server) => {
         const receiverObj = await User.findById(receiver).select('_id name userName mobile').lean();
 
         // Store the file metadata (e.g., fileUrl, fileType) in MongoDB
-        const newChat = new Chat({ senderObj, receiverObj, message: `${fileType} uploaded`, fileName, fileUrl, fileType });
+        const newChat = new Chat({ 
+          senderObj, 
+          receiverObj, 
+          message: `${fileType} uploaded`, 
+          fileName, 
+          fileUrl, 
+          fileType 
+        });
         await newChat.save();
 
         const receiverSocketId = connectedUsers.get(receiver);
@@ -146,6 +158,31 @@ const initSocket = async (server) => {
           io.to(receiverSocketId).emit('file upload', { senderObj, receiverObj, fileName, fileUrl, fileType });
         }
         socket.emit('file upload', { senderObj, receiverObj, fileName, fileUrl, fileType });
+      });
+
+      socket.on('file upload on group', async (data) => {
+        const { sender, groupId, fileName, fileUrl, fileType } = data;
+
+        // Fetch sender and receiver details
+        const senderObj = await User.findById(sender).select('_id name userName mobile').lean();
+        const groupObj = await Group.findById(groupId);
+
+        // Store the file metadata (e.g., fileUrl, fileType) in MongoDB
+        const newGroupChat = new GroupChat({ 
+          senderObj, 
+          groupObj, 
+          message: `${fileType} uploaded`, 
+          fileName, 
+          fileUrl, 
+          fileType 
+        });
+        await newGroupChat.save();
+
+        // Emit file to the sender and group
+       
+        io.to(groupId).emit('file upload on group', { senderObj, groupObj, fileName, fileUrl, fileType });
+        
+        //socket.emit('file upload', { senderObj, receiverObj, fileName, fileUrl, fileType });
       });
 
 

@@ -37,6 +37,6 @@ import { DialogComponent } from './_components/dialog/dialog.component';
 })
 export class UserModule { 
   constructor(){
-    console.log("user module loaded")
+    //console.log("user module loaded")
   }
 }

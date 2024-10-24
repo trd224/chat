@@ -22,7 +22,6 @@ export class DialogComponent implements OnInit {
   ) {
     this.users = data.users; // Assign users passed from parent component
     this.currentUser = data.currentUser;
-    console.log(this.users);
   }
 
   ngOnInit(): void {

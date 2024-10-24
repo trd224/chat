@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 //Chat Schema
 const ChatSchema = new mongoose.Schema({
   senderObj: {
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    _id: { type: String, required: true },
     name: { type: String, required: true },
     userName: { type: String, required: true },
     mobile: { type: String, required: true }
   },
   receiverObj: {
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    _id: { type: String, required: true },
     name: { type: String, required: true },
     userName: { type: String, required: true },
     mobile: { type: String, required: true }

@@ -4,20 +4,18 @@ const mongoose = require('mongoose');
 //Chat Schema
 const GroupChatSchema = new mongoose.Schema({
   senderObj: {
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
-    name: { type: String, required: true },
-    userName: { type: String, required: true },
-    mobile: { type: String, required: true }
+    _id: { type: String },
+    name: { type: String },
+    userName: { type: String },
+    mobile: { type: String }
   },
   groupObj: {
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
-    groupName: { type: String, required: true },
+    _id: { type: String },
+    groupName: { type: String },
     groupMembers: {
-        type: [String],
-        required: true,
-        default: []
+        type: [String]
     },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
+    createdBy: { type: String }, 
   },
   message: {type: String, required: true},
   fileName: {type: String},

@@ -74,12 +74,10 @@ export class ChatComponent implements OnInit {
             this.receiver = ""
 
             if(this.groupId){
-              console.log(this.groupId)
-              // this.chatService.getGroupHistory(this.sender, this.groupId).subscribe((history: any) => {
-              //   this.messages = history;
-              // });
+              this.chatService.getGroupHistory(this.groupId).subscribe((history: any) => {
+                this.messages = history;
+              });
               this.chatService.joinRoom(this.groupId);
-              //this.messages = [];
             }
 
 
@@ -92,13 +90,7 @@ export class ChatComponent implements OnInit {
               const queryParamsBeforeChange = this.route.snapshot.queryParams;
               this.chatService.leaveRoom(queryParamsBeforeChange["group"]);
             });
-
-
           }
-
-          
-
-          
         });
       })
       
@@ -114,8 +106,20 @@ export class ChatComponent implements OnInit {
       }
     });
 
+    // Listen for group messages
+    this.chatService.receiveGroupMessages().subscribe((msg: any) => {
+      if (this.sender == msg.senderObj._id || this.groupId == msg.groupObj._id) {
+        this.messages.push(msg); // Automatically update the view
+      }
+    });
+
     // Listen for new messages
     this.chatService.receiveUploadedFile().subscribe((msg: any) => {
+      this.messages.push(msg); // Automatically update the view
+    });
+
+    // Listen for group messages
+    this.chatService.receiveUploadedFileFromGroup().subscribe((msg: any) => {
       this.messages.push(msg); // Automatically update the view
     });
 
@@ -129,12 +133,6 @@ export class ChatComponent implements OnInit {
       }, 3000); // Adjust the timeout as needed
     });
 
-    this.chatService.receiveGroupMessages().subscribe((msg: any) => {
-      console.log(msg);
-      // if (this.sender == msg.senderObj._id || this.receiver == msg.senderObj._id) {
-      //   this.messages.push(msg); // Automatically update the view
-      // }
-    });
 
    
   }
@@ -184,7 +182,13 @@ export class ChatComponent implements OnInit {
           const fileUrl = response.fileUrl;
           const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
           // Send the file via socket
-          this.chatService.sendFile(this.sender, this.receiver, fileName, fileUrl, fileType);
+          if(!this.groupId){
+            this.chatService.sendFile(this.sender, this.receiver, fileName, fileUrl, fileType);
+          }
+          else{
+            this.chatService.sendFileOnGroup(this.sender, this.groupId, fileName, fileUrl, fileType);
+          }
+          
 
           // Reset file input
           this.fileToUpload = null;

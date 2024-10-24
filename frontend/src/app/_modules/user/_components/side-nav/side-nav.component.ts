@@ -40,7 +40,6 @@ export class SideNavComponent implements OnInit {
     this.getUsers();
     this.getGroups();
     this.route.queryParams.subscribe((params) => {
-      console.log(params);
       if(params['receiver']){
         this.receiver = params['receiver'];
         this.groupId = "";
