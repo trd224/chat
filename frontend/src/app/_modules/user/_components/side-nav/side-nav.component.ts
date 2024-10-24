@@ -58,7 +58,7 @@ export class SideNavComponent implements OnInit {
     });
   }
   getGroups(){
-    this.apiService.get(API_ENDPOINTS.chat.group.byCurrentUserId).subscribe((res) => {
+    this.apiService.get(API_ENDPOINTS.chat.group.currentUser.byCurrentUserId).subscribe((res) => {
       this.groups = res;
     });
   }

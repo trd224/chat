@@ -15,7 +15,7 @@ function authenticate(req, res, next){
     if(!user) return res.status(401).json({"message": "unauthorized"});
 
     req.currentUserId = user._id;
-
+    console.log("AAAAAAb", req.currentUserId)
     next();
 }
 

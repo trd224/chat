@@ -10,7 +10,10 @@ export const API_ENDPOINTS = {
     chat: {
         group: {
             all: `chat/group/all`,
-            byCurrentUserId: `chat/group/byCurrentUserId`
+            currentUser : {
+                byCurrentUserId: `chat/group/currentUser/byCurrentUserId`
+            }
+            
         },
     },
     

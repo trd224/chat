@@ -23,6 +23,10 @@ export class ChatService {
   getUserById(id: any){
     return this.http.get(`${environment.apiUrl}user/${id}`);
   }
+  getGroupById(id: any){
+    return this.http.get(`${environment.apiUrl}chat/group/${id}`);
+  }
+  
 
    // Emit the "typing" event to the server
    typing(sender: string, receiver: string) {

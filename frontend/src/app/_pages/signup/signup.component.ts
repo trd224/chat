@@ -40,6 +40,7 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(){
+    console.log(this.signupForm.value)
     this.submitted = true;
 
     if(this.signupForm.invalid){
@@ -49,7 +50,6 @@ export class SignupComponent implements OnInit {
     let formData = this.signupForm.value;
 
     delete formData.confirmPassword;
-
     this.authService.signup(API_ENDPOINTS.user.signup, formData).subscribe(res => {
       if(res.message == "User created"){
         this.router.navigate(["/login"]);

@@ -20,6 +20,7 @@ export class ChatComponent implements OnInit {
   receiver: string = '';
   receiverObj: any = {};
   groupId: string = "";
+  groupObj: any = {};
   message: string = '';
   messages: Array<any> = [];
   currentUser: any;
@@ -74,6 +75,9 @@ export class ChatComponent implements OnInit {
             this.receiver = ""
 
             if(this.groupId){
+              this.chatService.getGroupById(this.groupId).subscribe(res => {
+                this.groupObj = res;
+              })
               this.chatService.getGroupHistory(this.groupId).subscribe((history: any) => {
                 this.messages = history;
               });

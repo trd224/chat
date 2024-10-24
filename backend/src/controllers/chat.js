@@ -101,8 +101,26 @@ async function getAllGroup(req, res) {
   }
 }
 
+async function getGroupById(req, res) {
+  try{
+    const groupId = req.params.id;
+    const group = await Group.findOne({_id: groupId},{ __v:0 });
+    if(!group){
+        return res.status(404).json({message: "Group Not found"});
+    }
+    return res.status(200).json(group);
+}
+catch(err){
+    return res.status(500).json({ error: err });
+}
+}
+
+
+
 async function getGroupByCurrentUserId(req, res) {
+  
   try {
+    console.log("yyyyy")
     const currentUserId = req.currentUserId; 
     const groups = await Group.find({
       groupMembers: {
@@ -124,4 +142,4 @@ async function getGroupByCurrentUserId(req, res) {
 
 
 
-module.exports = { chatHistory, groupChatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupByCurrentUserId };
+module.exports = { chatHistory, groupChatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupById, getGroupByCurrentUserId };
