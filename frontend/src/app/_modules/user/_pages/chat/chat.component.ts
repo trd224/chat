@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ChatService } from '../../_services/chat.service';
 import { AuthService } from 'src/app/_shared/_services/auth.service';
 import { ApiService } from 'src/app/_shared/_services/api.service';
@@ -7,6 +14,8 @@ import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { filter, take } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmBoxComponent } from '../../_components/confirm-box/confirm-box.component';
 
 @Component({
   selector: 'app-chat',
@@ -14,12 +23,10 @@ import { filter, take } from 'rxjs/operators';
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit {
-
-
   sender: string = '';
   receiver: string = '';
   receiverObj: any = {};
-  groupId: string = "";
+  groupId: string = '';
   groupObj: any = {};
   message: string = '';
   messages: Array<any> = [];
@@ -31,6 +38,7 @@ export class ChatComponent implements OnInit {
   downloadProgressMap: { [fileUrl: string]: number } = {}; // Track progress for each file
   downloadSubscriptions: { [fileUrl: string]: any } = {};
   fileOpenLoading: { [fileUrl: string]: boolean } = {};
+  resetSideNav!: boolean;
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
@@ -39,80 +47,84 @@ export class ChatComponent implements OnInit {
     private authService: AuthService,
     private apiService: ApiService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {
-    
-  }
+    private route: ActivatedRoute,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-
-    this.authService.currentUser.subscribe((user:any) => {
+    this.authService.currentUser.subscribe((user: any) => {
       this.currentUser = user;
-      this.chatService.getCurrentUser().subscribe((res:any) => {
+      this.chatService.getCurrentUser().subscribe((res: any) => {
         this.sender = res._id;
 
-         // Register the current user after socket connection
-         this.chatService.registerUser(this.sender);
+        // Register the current user after socket connection
+        this.chatService.registerUser(this.sender);
 
         this.route.queryParams.subscribe((params) => {
-          if(params['receiver']){
+          if (params['receiver']) {
             this.receiver = params['receiver'];
-            this.groupId = "";
+            this.groupId = '';
 
             if (this.receiver) {
-              this.chatService.getUserById(this.receiver).subscribe(res => {
+              this.chatService.getUserById(this.receiver).subscribe((res) => {
                 this.receiverObj = res;
-              })
-         
-              this.chatService.getHistory(this.sender, this.receiver).subscribe((history: any) => {
-                this.messages = history;
               });
+
+              this.chatService
+                .getHistory(this.sender, this.receiver)
+                .subscribe((history: any) => {
+                  this.messages = history;
+                });
             }
-
-          }
-          else if(params['group']){
+          } else if (params['group']) {
             this.groupId = params['group'];
-            this.receiver = ""
+            this.receiver = '';
 
-            if(this.groupId){
-              this.chatService.getGroupById(this.groupId).subscribe(res => {
+            if (this.groupId) {
+              this.chatService.getGroupById(this.groupId).subscribe((res) => {
                 this.groupObj = res;
-              })
-              this.chatService.getGroupHistory(this.groupId).subscribe((history: any) => {
-                this.messages = history;
               });
+              this.chatService
+                .getGroupHistory(this.groupId)
+                .subscribe((history: any) => {
+                  this.messages = history;
+                });
               this.chatService.joinRoom(this.groupId);
             }
 
-
             this.router.events
-            .pipe(
-              filter((event): event is NavigationStart => event instanceof NavigationStart),
-              take(1) // Automatically unsubscribe after the first emission
-            ) 
-            .subscribe((event: NavigationStart) => {
-              const queryParamsBeforeChange = this.route.snapshot.queryParams;
-              this.chatService.leaveRoom(queryParamsBeforeChange["group"]);
-            });
+              .pipe(
+                filter(
+                  (event): event is NavigationStart =>
+                    event instanceof NavigationStart
+                ),
+                take(1) // Automatically unsubscribe after the first emission
+              )
+              .subscribe((event: NavigationStart) => {
+                const queryParamsBeforeChange = this.route.snapshot.queryParams;
+                this.chatService.leaveRoom(queryParamsBeforeChange['group']);
+              });
           }
         });
-      })
-      
+      });
     });
-   
-
-   
 
     // Listen for new messages
     this.chatService.receiveMessages().subscribe((msg: any) => {
-      if (this.sender == msg.senderObj._id || this.receiver == msg.senderObj._id) {
+      if (
+        this.sender == msg.senderObj._id ||
+        this.receiver == msg.senderObj._id
+      ) {
         this.messages.push(msg); // Automatically update the view
       }
     });
 
     // Listen for group messages
     this.chatService.receiveGroupMessages().subscribe((msg: any) => {
-      if (this.sender == msg.senderObj._id || this.groupId == msg.groupObj._id) {
+      if (
+        this.sender == msg.senderObj._id ||
+        this.groupId == msg.groupObj._id
+      ) {
         this.messages.push(msg); // Automatically update the view
       }
     });
@@ -136,9 +148,6 @@ export class ChatComponent implements OnInit {
         this.typingIndicator = ''; // Clear typing indicator after a short delay
       }, 3000); // Adjust the timeout as needed
     });
-
-
-   
   }
 
   // Fetch chat history
@@ -156,19 +165,19 @@ export class ChatComponent implements OnInit {
     );
   }
 
-
-
   // Send a message
   sendMessage(): void {
-    
     if (this.message.trim()) {
-      if(!this.groupId){
+      if (!this.groupId) {
         this.chatService.sendMessage(this.sender, this.receiver, this.message);
+      } else {
+        this.chatService.sendGroupMessage(
+          this.sender,
+          this.groupId,
+          this.message
+        );
       }
-      else{
-        this.chatService.sendGroupMessage(this.sender, this.groupId, this.message);
-      }
-      
+
       this.message = ''; // Clear input after sending
     }
   }
@@ -181,18 +190,30 @@ export class ChatComponent implements OnInit {
   // Upload and send file
   sendFile(): void {
     if (this.fileToUpload) {
-      this.chatService.uploadFile(this.fileToUpload).subscribe((response: any) => {
+      this.chatService
+        .uploadFile(this.fileToUpload)
+        .subscribe((response: any) => {
           const fileName = response.fileName;
           const fileUrl = response.fileUrl;
           const fileType: any = this.fileToUpload?.type.split('/')[0]; // e.g., 'image' or 'application'
           // Send the file via socket
-          if(!this.groupId){
-            this.chatService.sendFile(this.sender, this.receiver, fileName, fileUrl, fileType);
+          if (!this.groupId) {
+            this.chatService.sendFile(
+              this.sender,
+              this.receiver,
+              fileName,
+              fileUrl,
+              fileType
+            );
+          } else {
+            this.chatService.sendFileOnGroup(
+              this.sender,
+              this.groupId,
+              fileName,
+              fileUrl,
+              fileType
+            );
           }
-          else{
-            this.chatService.sendFileOnGroup(this.sender, this.groupId, fileName, fileUrl, fileType);
-          }
-          
 
           // Reset file input
           this.fileToUpload = null;
@@ -214,12 +235,11 @@ export class ChatComponent implements OnInit {
       .subscribe({
         next: (event) => {
           if (event.type === HttpEventType.DownloadProgress) {
-
-            this.downloadProgressMap[fileUrl] = Math.round((event.loaded / (event.total)) * 100);
+            this.downloadProgressMap[fileUrl] = Math.round(
+              (event.loaded / event.total) * 100
+            );
             //console.log(`Download Progress: ${this.downloadProgressMap[fileUrl]}%`);
-
           } else if (event instanceof HttpResponse) {
-
             const blob: Blob = event.body as Blob;
             const url = window.URL.createObjectURL(blob);
             const timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Remove special characters
@@ -229,14 +249,13 @@ export class ChatComponent implements OnInit {
             a.click();
             window.URL.revokeObjectURL(url); // Cleanup the URL object after download
             delete this.downloadProgressMap[fileUrl];
-
           }
         },
-       error: (error) => {
+        error: (error) => {
           console.error('Download error:', error);
           delete this.downloadProgressMap[fileUrl];
-        }
-  });
+        },
+      });
 
     // Store the subscription for future cancellation
     this.downloadSubscriptions[fileUrl] = downloadSubscription;
@@ -264,5 +283,38 @@ export class ChatComponent implements OnInit {
         delete this.fileOpenLoading[fileUrl];
       }
     );
+  }
+
+  exitGroup() {
+    const dialogRef = this.dialog.open(ConfirmBoxComponent, {
+      width: '300px',
+      data: {
+        title: 'Are you sure you want to exit ?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      //console.log(res);
+      if (res?.msg == 'yes') {
+        this.chatService.exitGroup(this.groupId).subscribe((res: any) => {
+          this.resetChat();
+          this.router.navigate(['/users/chat']);
+          this.resetSideNav = true;
+        });
+      } else {
+        this.resetSideNav = false; // Reset the flag if action is canceled
+      }
+    });
+  }
+
+  resetChat(): void {
+    this.messages = [];
+    this.groupId = '';
+    this.receiver = '';
+    this.receiverObj = {};
+    this.groupObj = {};
+    this.message = '';
+    this.typingIndicator = '';
+    // Any other state that needs to be reset
   }
 }

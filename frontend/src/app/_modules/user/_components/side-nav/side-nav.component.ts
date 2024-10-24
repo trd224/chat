@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/_shared/_services/api.service';
 import { API_ENDPOINTS } from 'src/app/_shared/_config/const';
 import { AuthService } from 'src/app/_shared/_services/auth.service';
@@ -22,6 +22,8 @@ export class SideNavComponent implements OnInit {
   groups!: any[];
   //groupName: string = ''; // Selected group name
 
+  @Input() resetSideNav: boolean = false;
+
   constructor(
     private apiService: ApiService, 
     private authService: AuthService, 
@@ -34,6 +36,7 @@ export class SideNavComponent implements OnInit {
       this.currentUser = user;
       this.sender = this.currentUser?.userName;
     });
+
   }
 
   ngOnInit(): void {
@@ -49,7 +52,15 @@ export class SideNavComponent implements OnInit {
         this.receiver = ""
       }
     })
-    
+
+  }
+
+  ngOnChanges() {
+    if (this.resetSideNav) {
+      // Handle reset logic here
+      console.log('SideNav is being reset');
+      this.getGroups();
+    }
   }
 
   getUsers(){
@@ -92,5 +103,9 @@ export class SideNavComponent implements OnInit {
       }
       
     });
+  }
+
+  abc(event: any){
+
   }
 }

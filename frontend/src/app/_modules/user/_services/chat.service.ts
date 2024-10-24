@@ -154,4 +154,11 @@ createGroup(payload: any){
   return this.http.post(`${environment.apiUrl}chat/createGroup`, payload);
 }
 
+exitGroup(groupId: any){
+  const payload = {
+    groupId: groupId
+  }
+  return this.http.post(`${environment.apiUrl}chat/exitGroup`, payload);
+}
+
 }

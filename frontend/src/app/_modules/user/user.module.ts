@@ -8,6 +8,8 @@ import { ChatComponent } from './_pages/chat/chat.component';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { SideNavComponent } from './_components/side-nav/side-nav.component';
 import { DialogComponent } from './_components/dialog/dialog.component';
+import { AlertBoxComponent } from './_components/alert-box/alert-box.component';
+import { ConfirmBoxComponent } from './_components/confirm-box/confirm-box.component';
 
 
 
@@ -18,7 +20,9 @@ import { DialogComponent } from './_components/dialog/dialog.component';
       DetailComponent,
       ChatComponent,
       SideNavComponent,
-      DialogComponent
+      DialogComponent,
+      AlertBoxComponent,
+      ConfirmBoxComponent
   ],
   imports: [
     CommonModule,

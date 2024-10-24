@@ -7,6 +7,11 @@ const GroupSchema = new mongoose.Schema({
         required: true,
         default: []
     },
+    admins: {
+        type: [String],
+        required: true,
+        default: []
+    },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Link to user
     timestamp: { type: Date, default: Date.now }
 });

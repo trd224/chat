@@ -74,10 +74,18 @@ async function createGroup(req, res) {
       groupMembers.push(currentUserId); // Ensure current user is added to groupMembers
     }
 
+    // Add the current user as a default admin of the group
+    const admins = [];
+    if (!admins.includes(currentUserId)) {
+      admins.push(currentUserId);
+    }
+    
+
     // Create a new group
     const newGroup = new Group({
       groupName,
       groupMembers,
+      admins,
       createdBy: currentUserId
     });
 
@@ -87,6 +95,31 @@ async function createGroup(req, res) {
     return res.status(500).json({ error: err.message });
   }
 }
+
+async function exitGroup(req, res) {
+  try {
+    // console.log(req.body);
+    const {groupId} = req.body;
+    const currentUserId = req.currentUserId;
+    const group = await Group.findByIdAndUpdate(
+      groupId,
+      {
+        $pull: { groupMembers: currentUserId }
+      },
+      { new: true } // This option returns the updated document
+    );
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    return res.status(200).json({ message: "User exit successfully!" });
+
+  }
+  catch(err){
+    return res.status(500).json({ error: err.message });
+  }
+}
+
 
 async function getAllGroup(req, res) {
   try {
@@ -142,4 +175,4 @@ async function getGroupByCurrentUserId(req, res) {
 
 
 
-module.exports = { chatHistory, groupChatHistory, uploadFile, downloadFile, openFile, createGroup, getAllGroup, getGroupById, getGroupByCurrentUserId };
+module.exports = { chatHistory, groupChatHistory, uploadFile, downloadFile, openFile, createGroup, exitGroup, getAllGroup, getGroupById, getGroupByCurrentUserId };
